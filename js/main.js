@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnCopyEmail && copyFeedback) {
     btnCopyEmail.addEventListener('click', async () => {
-      const email = btnCopyEmail.getAttribute('data-email') || 'scotch@director.film';
+      const email = btnCopyEmail.getAttribute('data-email') || 'lifeofscotch@gmail.com';
       try {
         await navigator.clipboard.writeText(email);
         copyFeedback.classList.add('show');
