@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SCOTCH — Film Director & Cinematographer. A narrative experience in cinematic layers.">
+  <title>SCOTCH — Filmmaker</title>
+
+  <!-- Typography: Google Fonts (IM Fell DW Pica SC & Jersey 25) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica+SC&family=Jersey+25&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/base.css?v=1793655210">
+  <link rel="stylesheet" href="css/layers.css?v=1793654546">
+  <link rel="stylesheet" href="css/components.css?v=1793654660">
+</head>
+<body>
+
+  <!-- =========================================================================
+       MINIMAL FIXED NAVIGATION TABS (TOP RIGHT)
+       ========================================================================= -->
+  <nav class="nav-tabs-group" aria-label="Portfolio Sections">
+    <a href="work.html" class="nav-tab-item" aria-label="Selected Commercial Work" title="View Selected Commercial Films">
+      <span class="tab-label">WORK</span>
+      <span class="tab-badge">10 FILMS</span>
+    </a>
+    <a href="photography.html" class="nav-tab-item" hidden aria-label="Photography Portfolio" title="View Photography Series">
+      <span class="tab-label"><span class="label-full">PHOTOGRAPHY</span><span class="label-short">PHOTO</span></span>
+      <span class="tab-badge">SERIES</span>
+    </a>
+    <a href="experiments.html" class="nav-tab-item" hidden aria-label="Creative Lab Experiments" title="View Creative Experiments">
+      <span class="tab-label"><span class="label-full">EXPERIMENTS</span><span class="label-short">EXP</span></span>
+      <span class="tab-badge">LAB</span>
+    </a>
+  </nav>
+
+  <!-- =========================================================================
+       MAIN STAGE: FULL-BLEED CINEMA LAYERS (ONE STATEMENT PER LAYER)
+       ========================================================================= -->
+  <main class="depth-stage" id="depth-stage">
+    <div class="strata-container">
+
+      <!-- =====================================================================
+           LAYER 00: PROLOGUE
+           ===================================================================== -->
+      <section class="strata-layer is-active" id="layer-0" aria-label="Layer 0: Prologue">
+        <!-- Wordmark (top-left of the first layer; matches inner-page header logo) -->
+        <a href="index.html" class="home-logo" aria-label="Scotch — Home">SCOTCH</a>
+        <!-- Sub-Plane: Media (Edge to edge) -->
+        <div class="plane-media">
+          <video autoplay muted loop playsinline poster="assets/media/dscf0594-web.jpg">
+            <source src="assets/media/reel.mp4" type="video/mp4">
+          </video>
+          <span class="depth-plane-label depth-label-bg">PLATE: SHOWREEL [Z: -160PX]</span>
+        </div>
+
+        <!-- Sub-Plane: Foreground Content (Single Statement) -->
+        <div class="plane-content">
+          <div class="statement-wrap">
+            <h1 class="statement-text" style="font-size: clamp(2.66rem, 6.03vw, 5.5rem);">
+              Make <span class="cycle-word" data-words="Good,Bold,Weird,Honest,Brave,Strange,Beautiful,Loud,Quiet,Wild,Human,Playful,Fearless,Curious,Real,Timeless,Messy,Joyful,Daring,Tender,Electric,Better" data-interval="1600">Good</span> Work
+            </h1>
+          </div>
+          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           LAYER 01: CINESTILL 800T (PORTRAIT / IN THE FIELD)
+           ===================================================================== -->
+      <section class="strata-layer" id="layer-portrait" aria-label="Layer: CineStill 800T Field Scout">
+        <!-- Sub-Plane: Media -->
+        <div class="plane-media">
+          <img src="assets/media/cinestill-portrait-web.jpg" alt="CineStill 800T 35mm film portrait with sprockets" loading="lazy">
+          <span class="depth-plane-label depth-label-bg">PLATE: CINESTILL 800T [Z: -160PX]</span>
+        </div>
+
+        <!-- Sub-Plane: Foreground Content -->
+        <div class="plane-content">
+          <div class="statement-wrap">
+            <h2 class="statement-text">
+              My name is Mitch but you can call me <span class="statement-big">Scotch</span>
+            </h2>
+          </div>
+          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           LAYER 02: BROADCAST MONITOR (TV IN STUDIO ENVIRONMENT)
+           ===================================================================== -->
+      <section class="strata-layer tv-stage-layer" id="layer-tv" aria-label="Layer: Broadcast Monitor">
+        <!-- Sub-Plane: Media (Studio Tabletop Environment) -->
+        <div class="plane-media">
+          <img src="assets/media/tv-background.jpg?v=32" alt="Studio tabletop environment" loading="lazy">
+          <span class="depth-plane-label depth-label-bg">PLATE: STUDIO DESK [Z: -160PX]</span>
+        </div>
+
+        <!-- Television Stage: Video Screen Behind Transparent Bezel Overlay -->
+        <div class="tv-composite-stage">
+          <div class="tv-unit-wrapper">
+            <!-- Contact Shadow on Tabletop -->
+            <div class="tv-contact-shadow"></div>
+
+            <!-- Middle Layer: Video Screen inside CRT aperture -->
+            <div class="tv-screen-container">
+              <video class="tv-screen-video" autoplay muted loop playsinline poster="assets/media/tv-intro-poster.jpg">
+                <source src="assets/media/tv-intro-4x3.mp4" type="video/mp4">
+              </video>
+              <div class="tv-screen-glare"></div>
+            </div>
+
+            <!-- Foreground Layer: Transparent Cutout CRT Broadcast Monitor Frame -->
+            <img src="assets/media/tv-frame.png" alt="Sony Broadcast Monitor Frame" class="tv-frame-overlay" draggable="false">
+          </div>
+        </div>
+
+        <!-- Sub-Plane: Foreground Content (Above Monitor) -->
+        <div class="plane-content">
+          <div class="statement-wrap">
+            <h2 class="statement-text">
+              
+            </h2>
+          </div>
+          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           LAYER 04: LORD OF THE RINGS EDIT
+           ===================================================================== -->
+      <section class="strata-layer" id="layer-lotr" aria-label="Layer: Lord of the Rings Cinema Artwork">
+        <!-- Sub-Plane: Media -->
+        <div class="plane-media">
+          <img src="assets/media/lotr-edit-web.jpg" alt="The Lord of the Rings Cinema Edit" loading="lazy">
+          <span class="depth-plane-label depth-label-bg">PLATE: FELLOWSHIP EDIT [Z: -160PX]</span>
+        </div>
+
+        <!-- Sub-Plane: Foreground Content -->
+        <div class="plane-content">
+          <div class="statement-wrap">
+            <h2 class="statement-text">
+              Placeholder text
+            </h2>
+          </div>
+          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           LAYER 06: DIRECTOR NOTEBOOK (WRITE THINGS DOWN)
+           ===================================================================== -->
+      <section class="strata-layer" id="layer-notebook" aria-label="Layer: Director Notebook">
+        <!-- Sub-Plane: Media -->
+        <div class="plane-media">
+          <img src="assets/media/director-notebook-web.jpg" alt="Write things down - Director spiral notebook" loading="lazy">
+          <span class="depth-plane-label depth-label-bg">PLATE: FIELD JOURNAL [Z: -160PX]</span>
+        </div>
+
+        <!-- Sub-Plane: Foreground Content -->
+        <div class="plane-content">
+          <div class="statement-wrap">
+            <h2 class="statement-text">
+              
+            </h2>
+          </div>
+          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           LAYER 07: INQUIRIES
+           ===================================================================== -->
+      <section class="strata-layer" id="layer-5" aria-label="Layer 4: Inquiries">
+        <!-- Sub-Plane: Media -->
+        <div class="plane-media">
+          <img src="assets/media/scotch-background-web.png" alt="Scotch leaping through clouds, half photo, half pixel art" loading="lazy">
+          <span class="depth-plane-label depth-label-bg">PLATE: SCOTCH [Z: -160PX]</span>
+        </div>
+
+        <!-- Sub-Plane: Foreground Content (Placeholder Statement & Minimal Link) -->
+        <div class="plane-content">
+          <div class="statement-wrap">
+            <h2 class="statement-text">
+              Reach out
+            </h2>
+            <a class="statement-action" id="btn-copy-email" data-email="scotch@director.film" title="Click to copy email address">
+              scotch@director.film &rarr;
+            </a>
+            <div class="copy-feedback-toast" id="copy-feedback">&bull; COPIED TO CLIPBOARD</div>
+          </div>
+          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       SCRIPTS (Cache-busted)
+       ========================================================================= -->
+  <script src="js/canvas-backdrop.js?v=12"></script>
+  <script src="js/audio.js?v=12"></script>
+  <script src="js/parallax.js?v=1793654660"></script>
+  <script src="js/cycle-words.js?v=1793650550"></script>
+  <script src="js/main.js?v=1793653677"></script>
+</body>
+</html>

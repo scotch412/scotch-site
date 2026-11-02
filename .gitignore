@@ -1,0 +1,104 @@
+# ------------------------------------------------------------------
+# Only the live site (index.html, work.html, css/, js/, used assets)
+# is published to GitHub Pages. Everything below stays local.
+# ------------------------------------------------------------------
+
+# Local editing hub + tools (need the Python server; don't run on Pages)
+dashboard.html
+server.py
+apply_site_data.py
+extract_site_data.py
+site-data.json
+package.json
+__pycache__/
+*.pyc
+templates/
+.site_backups/
+README.local.md
+
+# Source material / archives
+extracted_media/
+tv layer/
+*.zip
+
+# Unfinished sections (hidden from the nav for now)
+photography.html
+experiments.html
+css/photography.css
+css/experiments.css
+js/photography.js
+js/experiments.js
+
+# Commercial font: the site uses the visitor's own Helvetica instead
+assets/fonts/Helvetica/
+
+# Unused / original-resolution assets
+/assets/fonts/DUKEPLUS.TTF
+/assets/fonts/Geist/Geist-Italic-Variable.ttf
+/assets/fonts/Geist/Geist-Variable.ttf
+/assets/fonts/Geist/OFL.txt
+/assets/images/film-hero.jpg
+/assets/images/film-scene-flare.jpg
+/assets/images/layer-1-genesis.jpg
+/assets/images/layer-2-craft.jpg
+/assets/images/layer-3-journey.jpg
+/assets/images/layer-4-vision.jpg
+/assets/media/alabama-mitch-web.jpg
+/assets/media/barnes-noble-logo.png
+/assets/media/cinestill-portrait.jpg
+/assets/media/cutri-poster.jpg
+/assets/media/cutri.mp4
+/assets/media/director-notebook.png
+/assets/media/dsc02947-web.jpg
+/assets/media/dsc03714-web.jpg
+/assets/media/dsc06460-web.jpg
+/assets/media/dsc06460.jpg
+/assets/media/dsc06685-web.jpg
+/assets/media/dsc07262-web.jpg
+/assets/media/dsc07408-web.jpg
+/assets/media/dsc07439-web.jpg
+/assets/media/dsc07439.jpg
+/assets/media/dsc07457-web.jpg
+/assets/media/dsc07460-web.jpg
+/assets/media/dsc08755-web.jpg
+/assets/media/dsc08755.jpg
+/assets/media/dscf0553-web.jpg
+/assets/media/dscf0594.jpg
+/assets/media/dscf0725-web.jpg
+/assets/media/dscf0725.jpg
+/assets/media/dscf0738-web.jpg
+/assets/media/dscf0939-web.jpg
+/assets/media/dscn1306-web.jpg
+/assets/media/glossier-logo.png
+/assets/media/harrys-logo.png
+/assets/media/img-1021-web.jpg
+/assets/media/intro.mov
+/assets/media/jack-elizabeth-bw.png
+/assets/media/lotr-edit.png
+/assets/media/north-face-logo.png
+/assets/media/pentax-logo.png
+/assets/media/photo-arch-7f6d-web.jpg
+/assets/media/photo-arch-d955-web.jpg
+/assets/media/r1-08186-006a-web.jpg
+/assets/media/r1-08186-006a.jpg
+/assets/media/r1-08186-013a-web.jpg
+/assets/media/r1-08186-013a.jpg
+/assets/media/r1-08186-014a-web.jpg
+/assets/media/r1-08186-014a.jpg
+/assets/media/r1-08186-016a-web.jpg
+/assets/media/r1-08186-035a-web.jpg
+/assets/media/r1-08186-036a-web.jpg
+/assets/media/reel.mov
+/assets/media/scotch-background.png
+/assets/media/swim-intro-00011-web.jpg
+/assets/media/tillamook-logo.png
+/assets/media/tv-background-web.jpg
+/assets/media/tv-frame-15s.jpg
+/assets/media/tv-frame-5s.jpg
+/assets/media/tv-frame-preview.png
+/assets/media/tv-intro.mov
+/assets/media/tv-intro.mp4
+
+# OS / editor junk
+.DS_Store
+._*
