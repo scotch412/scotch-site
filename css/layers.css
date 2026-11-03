@@ -357,6 +357,33 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   transform-origin: 20% 3%;
 }
 
+/* LOTR layer: "Let's make cool things" artwork, pushed to the right.
+   The h2 keeps the real text for screen readers/SEO but is visually hidden. */
+#layer-lotr .statement-wrap {
+  max-width: none;
+  align-items: flex-end;
+  padding-right: clamp(24px, 6vw, 120px);
+}
+#layer-lotr .statement-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+#layer-lotr .lotr-title-art {
+  display: block;
+  width: clamp(240px, 36vw, 560px);
+  height: auto;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
+}
+@media (max-width: 640px) {
+  #layer-lotr .statement-wrap { align-items: center; padding-right: 0; }
+  #layer-lotr .lotr-title-art { width: 78vw; }
+}
+
 /* --------------------------------------------------------------------------
    Layer: CineStill portrait — headline always sits in the space right of
    Scotch's face, at every window shape.

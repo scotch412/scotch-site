@@ -188,9 +188,23 @@ document.addEventListener('DOMContentLoaded', () => {
       ytFrame.src = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1${play ? '&autoplay=1' : ''}`;
     };
 
+    // Campaign spots: YouTube IDs first, then the local data-video-src file (if any) as an extra spot.
+    const spots = youtubeIds.map(id => ({ type: 'youtube', id, thumb: `https://i.ytimg.com/vi/${id}/mqdefault.jpg` }));
+    if (youtubeIds.length && videoSrc) spots.push({ type: 'file', src: videoSrc, thumb: poster || '' });
+
+    // Play a local file spot in the native player (used when a campaign mixes YouTube + local files).
+    const playFileSpot = (src) => {
+      if (ytFrame) ytFrame.removeAttribute('src');
+      if (playerScreen) playerScreen.classList.remove('is-youtube');
+      if (!video) return;
+      if (poster) video.poster = poster;
+      if (!video.src.endsWith(src)) { video.src = src; video.load(); }
+      video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
+    };
+
     if (spotsEl) {
       spotsEl.innerHTML = '';
-      spotsEl.hidden = youtubeIds.length < 2;
+      spotsEl.hidden = spots.length < 2;
     }
 
     if (youtubeIds.length && ytFrame) {
@@ -198,14 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
       playYouTube(youtubeIds[0], autoPlay);
       if (playerScreen) playerScreen.classList.add('is-youtube');
 
-      if (spotsEl && youtubeIds.length > 1) {
-        youtubeIds.forEach((id, i) => {
+      if (spotsEl && spots.length > 1) {
+        spots.forEach((s, i) => {
           const spot = document.createElement('button');
           spot.type = 'button';
           spot.className = 'spot-btn' + (i === 0 ? ' is-active' : '');
           spot.setAttribute('role', 'tab');
           spot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-          spot.innerHTML = `<img class="spot-thumb" src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt="" loading="lazy"><span>Spot ${String(i + 1).padStart(2, '0')}</span>`;
+          spot.innerHTML = `<img class="spot-thumb" src="${s.thumb}" alt="" loading="lazy"><span>Spot ${String(i + 1).padStart(2, '0')}</span>`;
           spot.addEventListener('click', () => {
             spotsEl.querySelectorAll('.spot-btn').forEach(b => {
               b.classList.remove('is-active');
@@ -213,7 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             spot.classList.add('is-active');
             spot.setAttribute('aria-selected', 'true');
-            playYouTube(id, true);
+            if (s.type === 'youtube') {
+              if (video) video.pause();
+              if (playerScreen) playerScreen.classList.add('is-youtube');
+              playYouTube(s.id, true);
+            } else {
+              playFileSpot(s.src);
+            }
           });
           spotsEl.appendChild(spot);
         });
