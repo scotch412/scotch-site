@@ -140,8 +140,7 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: #ffffff;
-  padding-bottom: 4px;
-  border-bottom: 2px solid #ffffff;
+  text-decoration: none;
   cursor: pointer;
 }
 
