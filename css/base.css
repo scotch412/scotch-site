@@ -2,6 +2,31 @@
    STRATA — Base Design System & Core Tokens
    ========================================================================== */
 
+/* Stack Sans Headline (OFL, variable weight 200–700) — home layer titles, pills, small text; project-page body copy */
+@font-face {
+  font-family: 'Stack Sans Headline';
+  src: url('../assets/fonts/StackSansHeadline/StackSansHeadline-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Zalando Sans Expanded (OFL, variable weight 200–900) — SCOTCH logo + project page headings */
+@font-face {
+  font-family: 'Zalando Sans Expanded';
+  src: url('../assets/fonts/ZalandoSansExpanded/ZalandoSansExpanded-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Zalando Sans Expanded';
+  src: url('../assets/fonts/ZalandoSansExpanded/ZalandoSansExpanded-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'BBH Bartle';
   src: url('../assets/fonts/BBHBartle-Regular.ttf') format('truetype');
@@ -66,7 +91,14 @@
   /* Typography System */
   --font-main: 'Redaction 35', 'Helvetica Neue', Helvetica, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-title: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --title-tracking: 0em; /* letter-spacing for Helvetica titles (was 0.02em) */
+  /* Letter-spacing guideline: every rule on the site uses one of these. */
+  --tracking-title: -0.02em;  /* titles, headings, pills, big statements */
+  --tracking-label: 0.06em;   /* small UPPERCASE labels, buttons, kickers, captions */
+  --tracking-logo: 0.04em;    /* SCOTCH wordmark only */
+  --font-logo: 'Zalando Sans Expanded', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* logo + project headings */
+  --logo-weight: 800;
+  --font-text: 'Stack Sans Headline', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* main text font */
+  --title-tracking: var(--tracking-title); /* legacy alias */
   --font-serif: var(--font-title);
   --font-tech: 'Jersey 25', monospace, sans-serif;
   --font-mono: var(--font-tech);
@@ -294,7 +326,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-title);
   font-weight: 400;
   line-height: 1.1;
-  letter-spacing: var(--title-tracking);
+  letter-spacing: var(--tracking-title);
   text-transform: uppercase;
 }
 
@@ -318,7 +350,7 @@ h1, h2, h3, h4, h5, h6 {
 .text-mono {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--text-tertiary);
 }

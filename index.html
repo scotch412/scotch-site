@@ -11,21 +11,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica+SC&family=Jersey+25&display=swap" rel="stylesheet">
 
+  <!-- Warm up YouTube connections for faster hover previews -->
+  <link rel="preconnect" href="https://www.youtube-nocookie.com">
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
+  <link rel="preconnect" href="https://www.youtube.com">
+
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="css/base.css?v=1793656061">
-  <link rel="stylesheet" href="css/layers.css?v=1793673000">
-  <link rel="stylesheet" href="css/components.css?v=1793654660">
+  <link rel="stylesheet" href="css/base.css?v=1793753767">
+  <link rel="stylesheet" href="css/layers.css?v=1793757203">
+  <link rel="stylesheet" href="css/components.css?v=1793757042">
 </head>
 <body>
+
+  <!-- Wordmark: fixed top-left, stays put while scrolling -->
+  <a href="index.html" class="home-logo" aria-label="Scotch — Home">SCOTCH</a>
 
   <!-- =========================================================================
        MINIMAL FIXED NAVIGATION TABS (TOP RIGHT)
        ========================================================================= -->
   <nav class="nav-tabs-group" aria-label="Portfolio Sections">
-    <a href="work.html" class="nav-tab-item" aria-label="Selected Commercial Work" title="View Selected Commercial Films">
-      <span class="tab-label">WORK</span>
-      <span class="tab-badge">10 FILMS</span>
-    </a>
     <a href="photography.html" class="nav-tab-item" hidden aria-label="Photography Portfolio" title="View Photography Series">
       <span class="tab-label"><span class="label-full">PHOTOGRAPHY</span><span class="label-short">PHOTO</span></span>
       <span class="tab-badge">SERIES</span>
@@ -46,8 +51,6 @@
            LAYER 00: PROLOGUE
            ===================================================================== -->
       <section class="strata-layer is-active" id="layer-0" aria-label="Layer 0: Prologue">
-        <!-- Wordmark (top-left of the first layer; matches inner-page header logo) -->
-        <a href="index.html" class="home-logo" aria-label="Scotch — Home">SCOTCH</a>
         <!-- Sub-Plane: Media (Edge to edge) -->
         <div class="plane-media">
           <video autoplay muted loop playsinline poster="assets/media/dscf0594-web.jpg">
@@ -60,7 +63,7 @@
         <div class="plane-content">
           <div class="statement-wrap">
             <h1 class="statement-text" style="font-size: clamp(2.66rem, 6.03vw, 5.5rem);">
-              Make Good Work
+              Make good work.
             </h1>
           </div>
           <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
@@ -145,33 +148,106 @@
             <h2 class="statement-text">
               Let&#x27;s make cool things
             </h2>
-            <img class="lotr-title-art" src="assets/media/lets-make-cool-things.png?v=2" alt="" aria-hidden="true">
+            <span class="lotr-art-wrap"><img class="lotr-title-art" src="assets/media/lets-make-cool-things.png?v=2" alt="" aria-hidden="true"><span class="lotr-asterisk" aria-hidden="true">*</span></span>
           </div>
           <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
         </div>
+        <p class="lotr-footnote"><span aria-hidden="true">*</span>No AI was used in this image</p>
       </section>
 
 
-      <!-- =====================================================================
-           LAYER 06: DIRECTOR NOTEBOOK (WRITE THINGS DOWN)
-           ===================================================================== -->
-      <section class="strata-layer" id="layer-notebook" aria-label="Layer: Director Notebook">
-        <!-- Sub-Plane: Media -->
+      <!-- WORK LAYERS:START (generated from site-data.json work_films) -->
+      <div id="work" class="work-anchor" aria-hidden="true"></div>
+      <section class="strata-layer work-layer" id="work-project-genie" aria-label="Work: Project Genie" data-preview-youtube="YxkGdX4WIBE">
         <div class="plane-media">
-          <img src="assets/media/director-notebook-web.jpg" alt="Write things down - Director spiral notebook" loading="lazy">
-          <span class="depth-plane-label depth-label-bg">PLATE: FIELD JOURNAL [Z: -160PX]</span>
+          <img src="assets/media/project-genie-poster.jpg" alt="" loading="lazy">
         </div>
-
-        <!-- Sub-Plane: Foreground Content -->
-        <div class="plane-content">
-          <div class="statement-wrap">
-            <h2 class="statement-text">
-              
-            </h2>
-          </div>
-          <span class="depth-plane-label depth-label-fg">TYPOGRAPHY PLANE [Z: +160PX]</span>
+        <a class="work-layer-link" href="work/project-genie.html" aria-label="View Project Genie"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Project Genie</h2>
         </div>
       </section>
+
+      <section class="strata-layer work-layer" id="work-genie-3" aria-label="Work: Genie 3" data-preview-youtube="PDKhUknuQDg">
+        <div class="plane-media">
+          <img src="assets/media/genie-3-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/genie-3.html" aria-label="View Genie 3"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Genie 3</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-byu-soccer" aria-label="Work: BYU Women’s Soccer — All In" data-preview-youtube="L_AOF2yxgm8">
+        <div class="plane-media">
+          <img src="assets/media/byu-soccer-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/byu-soccer.html" aria-label="View BYU Women’s Soccer — All In"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">BYU Women’s Soccer — All in</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-dickies" aria-label="Work: Dickies — Anywear" data-preview-youtube="dGp4-USkDEE">
+        <div class="plane-media">
+          <img src="assets/media/dickies-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/dickies.html" aria-label="View Dickies — Anywear"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Dickies — Anywear</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-ibis" aria-label="Work: Ibis — Strength in Motion" data-preview-youtube="7VG5lqfpIls">
+        <div class="plane-media">
+          <img src="assets/media/ibis-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/ibis.html" aria-label="View Ibis — Strength in Motion"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Ibis — Strength in motion</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-tillamook" aria-label="Work: Tillamook — All In" data-preview-youtube="R3jOyDpH52s">
+        <div class="plane-media">
+          <img src="assets/media/tillamook-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/tillamook.html" aria-label="View Tillamook — All In"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Tillamook — All in</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-harrys" aria-label="Work: Harry’s" data-preview-youtube="ra0lvRtk0DM">
+        <div class="plane-media">
+          <img src="assets/media/harrys-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/harrys.html" aria-label="View Harry’s"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Harry’s</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-pentax" aria-label="Work: Pentax — Precision &amp; Soul" data-preview-youtube="WUfxkb-F3ZU">
+        <div class="plane-media">
+          <img src="assets/media/pentax-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/pentax.html" aria-label="View Pentax — Precision &amp; Soul"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">Pentax — Precision &amp; soul</h2>
+        </div>
+      </section>
+
+      <section class="strata-layer work-layer" id="work-north-face" aria-label="Work: The North Face — Mothers" data-preview-src="assets/media/north-face.mp4">
+        <div class="plane-media">
+          <img src="assets/media/north-face-poster.jpg" alt="" loading="lazy">
+        </div>
+        <a class="work-layer-link" href="work/north-face.html" aria-label="View The North Face — Mothers"></a>
+        <div class="work-pill">
+          <h2 class="work-pill-title">The North Face — Mothers</h2>
+        </div>
+      </section>
+      <!-- WORK LAYERS:END -->
 
       <!-- =====================================================================
            LAYER 07: INQUIRIES
@@ -201,6 +277,11 @@
     </div>
   </main>
 
+  <!-- Back to top (shown after the first layer; js/work-layers.js) -->
+  <button type="button" class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+  </button>
+
   <!-- =========================================================================
        SCRIPTS (Cache-busted)
        ========================================================================= -->
@@ -208,6 +289,7 @@
   <script src="js/audio.js?v=12"></script>
   <script src="js/parallax.js?v=1793654660"></script>
   <script src="js/cycle-words.js?v=1793650550"></script>
-  <script src="js/main.js?v=1793656062"></script>
+  <script src="js/main.js?v=1793757042"></script>
+  <script src="js/work-layers.js?v=1793725506"></script>
 </body>
 </html>
