@@ -125,7 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (state === 1) {          // 1 = playing
         if (!c.playing) c.hideCaptions(); // captions module loads with playback
         c.playing = true;
-        if (c.wantPlay) setTimeout(() => { if (c.wantPlay) reveal(); }, 600); // let the start-up overlay fade
+        // let YouTube's start-up overlay fade (the mobile player shows its controls for ~3s)
+        if (c.wantPlay) setTimeout(() => { if (c.wantPlay) reveal(); }, c.strict ? 3200 : 600);
       } else if (state === 0 || state === 2) {
         c.playing = false;
       }

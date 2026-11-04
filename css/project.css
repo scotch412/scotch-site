@@ -61,7 +61,10 @@ body.project-page ::selection { background: #111; color: #fff; }
 }
 .project-back:hover { color: #000; }
 
-/* ---------- Main + two-column grid ---------- */
+/* ---------- Main: one centred column ----------
+   The HTML still has two wrappers (aside.project-media + div.project-story);
+   they're unwrapped with display:contents so the pieces can be re-ordered:
+     title → video → spots → credits │ break │ BTS images → writing → prev/next */
 .project-main {
   width: 100%;
   max-width: 1440px;
@@ -70,23 +73,32 @@ body.project-page ::selection { background: #111; color: #fff; }
 }
 
 .project-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 80px);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  text-align: center;
 }
+.project-media, .project-story { display: contents; }
 
-.project-story { min-width: 0; }
-
-.project-media {
-  min-width: 0;
+.project-titleblock { order: 1; }
+.project-video      { order: 2; width: 100%; margin-top: clamp(24px, 3vw, 40px); }
+.project-spots      { order: 3; justify-content: center; }
+.project-credits    { order: 4; width: 100%; max-width: 760px; }
+.project-story::before {        /* the break between credits and everything after */
+  content: '';
+  order: 5;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.15);
+  margin: clamp(56px, 7vw, 96px) 0 clamp(40px, 5vw, 64px);
 }
-/* Pinned by js/project.js on desktop: stays put while the right column scrolls */
-.project-media-inner.is-fixed {
-  position: fixed;
-  top: calc(68px + 24px); /* below the header */
-  z-index: 5;
-}
+.project-images     { order: 6; width: 100%; margin-top: 0; }
+.project-body       { order: 7; margin-left: auto; margin-right: auto; }
+.project-pager      { order: 8; width: 100%; }
 
 /* ---------- Title (right, top) ---------- */
 .project-title {
@@ -257,7 +269,7 @@ body.project-page ::selection { background: #111; color: #fff; }
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
-.project-pager a { color: #111; text-decoration: none; }
+.project-pager a { color: #111; text-decoration: none; text-align: left; }
 .project-pager a:hover { text-decoration: underline; }
 .project-pager span { display: block; color: rgba(0, 0, 0, 0.4); font-size: 0.66rem; margin-bottom: 4px; }
 .project-pager .next { text-align: right; margin-left: auto; }
@@ -296,18 +308,10 @@ body.project-page ::selection { background: #111; color: #fff; }
   .project-body { font-size: 1.05rem; }
 }
 
-/* ---------- Tablet / phone: single column ---------- */
+/* ---------- Tablet / phone ---------- */
 @media (max-width: 760px) {
-  /* One column. Unwrap both columns so the pieces can be re-ordered:
-     title → video → spots/credits → writing → images */
-  .project-grid { display: flex; flex-direction: column; gap: 0; }
-  .project-media, .project-media-inner, .project-story { display: contents; }
-  .project-titleblock { order: 1; }
-  .project-video { order: 2; margin-top: 24px; }
-  .project-spots { order: 3; }
-  .project-credits { order: 4; }
-  .project-body { order: 5; }
-  .project-images { order: 6; }
+  .project-video { margin-top: 24px; }
+  .project-story::before { margin: 48px 0 32px; }
 }
 @media (max-width: 640px) {
   .project-bts { grid-template-columns: 1fr; }

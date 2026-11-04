@@ -4,35 +4,8 @@
  * 2. Lightbox: click any image inside .project-body to view it full screen.
  */
 document.addEventListener('DOMContentLoaded', () => {
-  // 0. Fixed left panel (video + credits) on desktop.
-  //    The <aside> stays in the grid as a placeholder; its contents are wrapped and
-  //    pinned with position:fixed at the column's exact position. Falls back to normal
-  //    flow on narrow screens or if the panel is taller than the window.
-  const media = document.querySelector('.project-media');
-  if (media) {
-    const inner = document.createElement('div');
-    inner.className = 'project-media-inner';
-    while (media.firstChild) inner.appendChild(media.firstChild);
-    media.appendChild(inner);
-
-    const HEADER = 68, GAP = 24;
-    const pin = () => {
-      inner.classList.remove('is-fixed');
-      inner.style.left = inner.style.width = '';
-      media.style.minHeight = '';
-      const fits = inner.offsetHeight <= window.innerHeight - HEADER - GAP - 110; // keep clear of the footer
-      if (window.innerWidth > 760 && fits) {
-        const r = media.getBoundingClientRect();
-        media.style.minHeight = `${inner.offsetHeight}px`;
-        inner.style.left = `${r.left}px`;
-        inner.style.width = `${r.width}px`;
-        inner.classList.add('is-fixed');
-      }
-    };
-    window.addEventListener('resize', pin);
-    window.addEventListener('load', pin); // re-measure once images/fonts load
-    pin();
-  }
+  // (The page is a single centred column now — css/project.css re-orders the
+  //  pieces: title → video → credits → writing / BTS. Nothing is pinned.)
 
   // 1. Spot switcher
   const player = document.getElementById('project-video');
