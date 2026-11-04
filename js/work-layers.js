@@ -6,8 +6,10 @@
  *      playing muted and hidden, so hovering simply reveals it (instant, and YouTube's
  *      play/pause indicator never appears because no play command is sent on hover).
  *      Players are unloaded again when their layer scrolls far away.
- *    - Only on devices with a real hover (mouse/trackpad).
+ *    - Mouse/trackpad: plays on hover. Touch screens (no hover): plays while the
+ *      layer fills most of the screen, and only appears once it's really playing.
  * 2. Back-to-top button: appears after the first layer, smooth-scrolls to the top.
+ * 3. Background videos (reel, TV) are nudged to autoplay on mobile.
  */
 document.addEventListener('DOMContentLoaded', () => {
   // ---------- 1. Hover previews ----------
@@ -83,8 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reveal(); // already running in the background: just show it
       } else {
         // Still loading: it reveals itself when the "playing" message arrives.
-        // Safety net: reveal anyway if that message never comes.
-        c.hideTimer = setTimeout(() => { if (c.wantPlay) reveal(); }, 2500);
+        if (c.ready) c.command('playVideo');
+        // Safety net (mouse only): reveal anyway if that message never comes.
+        if (!c.strict) c.hideTimer = setTimeout(() => { if (c.wantPlay) reveal(); }, 2500);
       }
     };
 
@@ -93,9 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!c.el) return;
       c.el.classList.remove('is-visible');
       // Local files pause; YouTube keeps playing hidden so the next hover is instant
-      // (pausing/resuming would flash YouTube's play/pause indicator).
+      // (pausing/resuming would flash YouTube's play/pause indicator). On touch
+      // screens there's no hover to wait for, so YouTube pauses too (saves battery).
       c.hideTimer = setTimeout(() => {
-        if (c.el && c.el.tagName === 'VIDEO') c.el.pause();
+        if (!c.el) return;
+        if (c.el.tagName === 'VIDEO') c.el.pause();
+        else if (c.strict) c.command('pauseVideo');
       }, 350);
     };
 
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return c;
   }
 
-  if (canHover) {
+  {
     window.addEventListener('message', (e) => {
       if (e.origin !== YT_ORIGIN) return;
       const c = players.get(e.source);
@@ -142,9 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.work-layer').forEach((layer) => {
       if (!layer.hasAttribute('data-preview-src') && !layer.hasAttribute('data-preview-youtube')) return;
       const c = makeController(layer);
+      // Touch screens: only reveal once the film is really playing (never show a
+      // paused YouTube frame with its big play button)
+      c.strict = !canHover;
       controllers.set(layer, c);
-      layer.addEventListener('mouseenter', c.play);
-      layer.addEventListener('mouseleave', c.pause);
+      if (canHover) {
+        layer.addEventListener('mouseenter', c.play);
+        layer.addEventListener('mouseleave', c.pause);
+      }
     });
 
     // Pre-load players for layers on or near the screen; unload far-away ones
@@ -157,7 +168,34 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { rootMargin: '60% 0px 60% 0px' });
     controllers.forEach((_, layer) => io.observe(layer));
+
+    // Touch screens (no hover): the film plays while its layer fills most of the screen
+    if (!canHover) {
+      const playIO = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const c = controllers.get(entry.target);
+          if (!c) return;
+          if (entry.intersectionRatio >= 0.6) c.play();
+          else if (c.wantPlay) c.pause();
+        });
+      }, { threshold: [0, 0.6] });
+      controllers.forEach((_, layer) => playIO.observe(layer));
+    }
   }
+
+  // ---------- 1b. Background videos (reel, TV) ----------
+  // iOS sometimes skips autoplay (e.g. Low Power Mode); nudge muted videos to play
+  // on load and again on the first touch / scroll.
+  const bgVideos = [...document.querySelectorAll('video[autoplay]')];
+  const kick = () => bgVideos.forEach((v) => {
+    v.muted = true;
+    v.playsInline = true;
+    if (v.paused) v.play().catch(() => {});
+  });
+  kick();
+  ['touchstart', 'scroll', 'click'].forEach((ev) =>
+    window.addEventListener(ev, kick, { once: true, passive: true }));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
 
   // ---------- 2. Back to top ----------
   const toTop = document.getElementById('back-to-top');
