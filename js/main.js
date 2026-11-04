@@ -146,8 +146,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const EDGE = () => Math.max(80, window.innerHeight * 0.18);
   const KEEP_CLICK = 'button, iframe, input, textarea, select, .home-logo, #back-to-top, #btn-copy-email, a:not(.work-layer-link)';
 
+  // The title pill is pointer-events:none (clicks fall through to the project
+  // link), so hit-test its box directly: clicking the pill always opens the project.
+  function overPill(e) {
+    const layer = e.target.closest && e.target.closest('.work-layer');
+    const pill = layer && layer.querySelector('.work-pill');
+    if (!pill) return false;
+    const r = pill.getBoundingClientRect();
+    return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+  }
+
   function edgeDir(e) {
     if (e.target.closest && e.target.closest(KEEP_CLICK)) return 0;
+    if (overPill(e)) return 0;
     if (e.clientY <= EDGE()) return -1;
     if (e.clientY >= window.innerHeight - EDGE()) return 1;
     return 0;
