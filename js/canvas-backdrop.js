@@ -52,11 +52,16 @@ class AmbientCanvas {
   }
 
   resize() {
+    // Mobile browsers fire resize when their toolbar slides in/out while
+    // scrolling; ignore those small height-only changes (re-allocating the
+    // canvas mid-scroll causes jank).
+    if (this.width === window.innerWidth && this.height &&
+        Math.abs(this.height - window.innerHeight) < 160) return;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.canvas.width = this.width * window.devicePixelRatio;
     this.canvas.height = this.height * window.devicePixelRatio;
-    this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    this.ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
   }
 
   animate() {

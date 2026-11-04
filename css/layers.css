@@ -21,7 +21,7 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100lvh; /* stable: doesn't resize when the mobile toolbar shows/hides */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -82,7 +82,7 @@
   width: 100%;
   max-width: 1440px;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100lvh; /* stable: doesn't resize when the mobile toolbar shows/hides */
   margin: 0 auto;
   padding: var(--space-2xl);
   display: flex;
@@ -185,7 +185,7 @@ body.depth-mode-active .depth-plane-label {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100lvh; /* stable: doesn't resize when the mobile toolbar shows/hides */
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -206,7 +206,7 @@ body.depth-mode-active .depth-plane-label {
   width: 100%;
   max-width: 1540px;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100lvh; /* stable: doesn't resize when the mobile toolbar shows/hides */
   margin: 0 auto;
   display: flex;
   flex-direction: column;
