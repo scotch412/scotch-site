@@ -79,14 +79,14 @@ body.project-page ::selection { background: #111; color: #fff; }
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
-  text-align: center;
+  text-align: left; /* components are centred; text inside them stays left-aligned */
 }
 .project-media, .project-story { display: contents; }
 
-.project-titleblock { order: 1; }
+.project-titleblock { order: 1; width: 100%; }
 .project-video      { order: 2; width: 100%; margin-top: clamp(24px, 3vw, 40px); }
-.project-spots      { order: 3; justify-content: center; }
-.project-credits    { order: 4; width: 100%; max-width: 760px; }
+.project-spots      { order: 3; width: 100%; }
+.project-credits    { order: 4; width: 100%; }
 .project-story::before {        /* the break between credits and everything after */
   content: '';
   order: 5;
@@ -97,7 +97,7 @@ body.project-page ::selection { background: #111; color: #fff; }
   margin: clamp(56px, 7vw, 96px) 0 clamp(40px, 5vw, 64px);
 }
 .project-images     { order: 6; width: 100%; margin-top: 0; }
-.project-body       { order: 7; margin-left: auto; margin-right: auto; }
+.project-body       { order: 7; width: 100%; }
 .project-pager      { order: 8; width: 100%; }
 
 /* ---------- Title (right, top) ---------- */
