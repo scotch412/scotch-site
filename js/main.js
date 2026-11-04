@@ -139,47 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: tops[target], behavior: 'smooth' });
   }
 
-  // 7b. Click near the top / bottom edge of the screen to jump a layer (like ↑ / ↓).
-  //     Edge zones are the top and bottom ~18% of the window. Real controls (logo,
-  //     buttons, email link, videos) keep working; on work layers the edges jump
-  //     instead of opening the project, the middle still opens it.
-  const EDGE = () => Math.max(80, window.innerHeight * 0.18);
-  const KEEP_CLICK = 'button, iframe, input, textarea, select, .home-logo, #back-to-top, #btn-copy-email, a:not(.work-layer-link)';
-
-  // The title pill is pointer-events:none (clicks fall through to the project
-  // link), so hit-test its box directly: clicking the pill always opens the project.
-  function overPill(e) {
-    const layer = e.target.closest && e.target.closest('.work-layer');
-    const pill = layer && layer.querySelector('.work-pill');
-    if (!pill) return false;
-    const r = pill.getBoundingClientRect();
-    return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
-  }
-
-  function edgeDir(e) {
-    if (e.target.closest && e.target.closest(KEEP_CLICK)) return 0;
-    if (overPill(e)) return 0;
-    if (e.clientY <= EDGE()) return -1;
-    if (e.clientY >= window.innerHeight - EDGE()) return 1;
-    return 0;
-  }
-
-  window.addEventListener('click', (e) => {
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
-    const dir = edgeDir(e);
-    if (!dir) return;
-    e.preventDefault();
-    e.stopPropagation(); // capture phase: stops the work-layer link from opening
-    jumpLayer(dir);
-  }, true);
-
-  // Cursor hint: up / down arrow cursor over the edge zones
-  window.addEventListener('mousemove', (e) => {
-    const dir = edgeDir(e);
-    document.body.classList.toggle('edge-up', dir < 0);
-    document.body.classList.toggle('edge-down', dir > 0);
-  }, { passive: true });
-
   // 7. Keyboard Shortcuts
   window.addEventListener('keydown', (e) => {
     if (['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) return;

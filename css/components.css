@@ -923,8 +923,3 @@
     word-break: break-word;
   }
 }
-
-
-/* Edge-click navigation (js/main.js): arrow cursors over the top/bottom click zones */
-body.edge-up, body.edge-up * { cursor: n-resize !important; }
-body.edge-down, body.edge-down * { cursor: s-resize !important; }
