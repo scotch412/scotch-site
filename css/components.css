@@ -143,11 +143,6 @@
   padding-bottom: 4px;
   border-bottom: 2px solid #ffffff;
   cursor: pointer;
-  transition: transform var(--duration-fast) ease;
-}
-
-.statement-action:hover {
-  transform: translateY(-2px);
 }
 
 .copy-feedback-toast {
