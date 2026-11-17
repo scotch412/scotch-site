@@ -102,3 +102,6 @@ assets/fonts/Helvetica/
 # OS / editor junk
 .DS_Store
 ._*
+
+# Agent handoff notes (local only; not published)
+HANDOFF.md
