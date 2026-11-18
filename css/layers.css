@@ -806,4 +806,6 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
 }
 @media (max-width: 760px) {
   .work-layer:has(+ .strata-layer:not(.work-layer)) { min-height: 0; padding-bottom: 48px; }
+  /* first film: a little more room below the "Let's make cool things" layer */
+  .work-anchor + .work-layer { padding-top: 40px; }
 }
