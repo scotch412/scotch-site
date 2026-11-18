@@ -486,7 +486,7 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
 /* Layers stay transparent and let their backdrops spill past the edge vertically
    (clipped sideways only), so neighbouring films cross-fade instead of meeting at a line. */
 .work-layer {
-  --blend: 28lvh;           /* height of the cross-fade between two films */
+  --blend: 46lvh;           /* height of the cross-fade between two films */
   background: transparent;
   overflow-x: clip;
   overflow-y: visible;
@@ -501,9 +501,37 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   max-width: none; /* base.css caps images at 100% */
   height: 100%;
   object-fit: cover;
-  filter: blur(48px) saturate(1.35) brightness(0.55);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--blend), #000 calc(100% - var(--blend)), transparent 100%);
-          mask-image: linear-gradient(to bottom, transparent 0, #000 var(--blend), #000 calc(100% - var(--blend)), transparent 100%);
+  filter: blur(72px) saturate(1.35) brightness(0.55);
+  /* eased (sine) fade in/out so the cross-fade has no visible start or end */
+  -webkit-mask-image: var(--ambient-mask);
+          mask-image: var(--ambient-mask);
+  --ambient-mask: linear-gradient(to bottom,
+    rgba(0,0,0,0.000) calc(var(--blend) * 0.000),
+    rgba(0,0,0,0.017) calc(var(--blend) * 0.083),
+    rgba(0,0,0,0.067) calc(var(--blend) * 0.167),
+    rgba(0,0,0,0.146) calc(var(--blend) * 0.250),
+    rgba(0,0,0,0.250) calc(var(--blend) * 0.333),
+    rgba(0,0,0,0.371) calc(var(--blend) * 0.417),
+    rgba(0,0,0,0.500) calc(var(--blend) * 0.500),
+    rgba(0,0,0,0.629) calc(var(--blend) * 0.583),
+    rgba(0,0,0,0.750) calc(var(--blend) * 0.667),
+    rgba(0,0,0,0.854) calc(var(--blend) * 0.750),
+    rgba(0,0,0,0.933) calc(var(--blend) * 0.833),
+    rgba(0,0,0,0.983) calc(var(--blend) * 0.917),
+    rgba(0,0,0,1.000) calc(var(--blend) * 1.000),
+    rgba(0,0,0,1.000) calc(100% - var(--blend) * 1.000),
+    rgba(0,0,0,0.983) calc(100% - var(--blend) * 0.917),
+    rgba(0,0,0,0.933) calc(100% - var(--blend) * 0.833),
+    rgba(0,0,0,0.854) calc(100% - var(--blend) * 0.750),
+    rgba(0,0,0,0.750) calc(100% - var(--blend) * 0.667),
+    rgba(0,0,0,0.629) calc(100% - var(--blend) * 0.583),
+    rgba(0,0,0,0.500) calc(100% - var(--blend) * 0.500),
+    rgba(0,0,0,0.371) calc(100% - var(--blend) * 0.417),
+    rgba(0,0,0,0.250) calc(100% - var(--blend) * 0.333),
+    rgba(0,0,0,0.146) calc(100% - var(--blend) * 0.250),
+    rgba(0,0,0,0.067) calc(100% - var(--blend) * 0.167),
+    rgba(0,0,0,0.017) calc(100% - var(--blend) * 0.083),
+    rgba(0,0,0,0.000) calc(100% - var(--blend) * 0.000));
   pointer-events: none;
   z-index: 0;
 }
