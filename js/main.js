@@ -59,24 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // 6. Direct Email Copy Feedback
-  const btnCopyEmail = document.getElementById('btn-copy-email');
-  const copyFeedback = document.getElementById('copy-feedback');
-
-  if (btnCopyEmail && copyFeedback) {
-    btnCopyEmail.addEventListener('click', async () => {
-      const email = btnCopyEmail.getAttribute('data-email') || 'lifeofscotch@gmail.com';
-      try {
-        await navigator.clipboard.writeText(email);
-        copyFeedback.classList.add('show');
-        setTimeout(() => {
-          copyFeedback.classList.remove('show');
-        }, 2400);
-      } catch (err) {
-        console.error('Clipboard copy failed:', err);
-      }
-    });
-  }
+  // 6. Email link: opens the contact window (js/contact.js)
 
   // 8. Page Transitions to Subpages (Work, Photography, Experiments)
   function navigateToPage(url) {
