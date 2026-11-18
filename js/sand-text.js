@@ -17,8 +17,9 @@
 (() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   // Layers whose headline becomes sand
-  // (per-layer tweaks: the portrait layer's sand comes home faster)
-  [['layer-0', {}], ['layer-portrait', { back: [16, 28], backPerPx: 0.05, hang: [0, 4] }]].forEach(([id, opts]) => {
+  // Both headlines use the faster return (per-layer options still possible)
+  const FAST = { back: [16, 28], backPerPx: 0.05, hang: [0, 4] };
+  [['layer-0', FAST], ['layer-portrait', FAST]].forEach(([id, opts]) => {
     const layer = document.getElementById(id);
     const heading = layer && layer.querySelector('.statement-text');
     if (layer && heading) sand(layer, heading, opts);
