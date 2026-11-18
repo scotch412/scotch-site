@@ -759,3 +759,15 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   color: #ffffff;
 }
 #layer-lotr .lotr-footnote span { margin-right: 2px; }
+
+/* Sand headline (js/sand-text.js): grains are drawn on a canvas over layer 0;
+   the real heading stays in place (transparent) for layout, SEO and screen readers. */
+.sand-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: calc(var(--z-fg) + 1);
+  pointer-events: none;
+}
+.statement-text.is-sand { color: transparent; }
