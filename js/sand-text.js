@@ -17,14 +17,15 @@
 (() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   // Layers whose headline becomes sand
-  ['layer-0', 'layer-portrait'].forEach((id) => {
+  // (per-layer tweaks: the portrait layer's sand comes home faster)
+  [['layer-0', {}], ['layer-portrait', { back: [16, 28], backPerPx: 0.05, hang: [0, 4] }]].forEach(([id, opts]) => {
     const layer = document.getElementById(id);
     const heading = layer && layer.querySelector('.statement-text');
-    if (layer && heading) sand(layer, heading);
+    if (layer && heading) sand(layer, heading, opts);
   });
 })();
 
-function sand(layer, heading) {
+function sand(layer, heading, opts = {}) {
 
   const isTouch = window.matchMedia('(hover: none)').matches;
   const STEP = isTouch ? 1.15 : 1.0;     // px between grains (finer = more grains)
@@ -34,9 +35,9 @@ function sand(layer, heading) {
   const SPREAD = 1.15;                   // sideways dispersion (0 = all straight ahead)
   const SLIDE = 0.87;                    // per-frame friction while sliding
   const GRIT = 0.035;                    // extra constant friction so grains come to a stop
-  const HANG = [2, 10];                  // frames a grain hangs (stopped) before heading back
-  const BACK = [30, 50];                 // frames for the trip home (plus a little per px of distance)
-  const BACK_PER_PX = 0.1;
+  const HANG = opts.hang || [2, 10];                  // frames a grain hangs (stopped) before heading back
+  const BACK = opts.back || [30, 50];                 // frames for the trip home (plus a little per px of distance)
+  const BACK_PER_PX = opts.backPerPx ?? 0.1;
   const easeIn = (u) => u * u * u;       // slow start, accelerating into place
 
   const canvas = document.createElement('canvas');
