@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dy = -Math.sin(k.s.rx * Math.PI / 180) * lift;
             const sc = 1 + 0.035 * k.hoverAmt;
             k.pill.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
-            const sy = 6 + 6 * k.hoverAmt, blur = 16 + 12 * k.hoverAmt, a = 0.22 + 0.1 * k.hoverAmt;
+            const sy = 4 + 4 * k.hoverAmt, blur = 12 + 8 * k.hoverAmt, a = 0.14 + 0.06 * k.hoverAmt;
             k.pill.style.setProperty('--pill-shadow',
               `${(-dx * 1.4).toFixed(1)}px ${(sy - dy * 1.4).toFixed(1)}px ${blur.toFixed(0)}px rgba(0, 0, 0, ${a.toFixed(3)})`);
           }
