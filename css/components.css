@@ -177,8 +177,8 @@
 /* Homepage wordmark: top-left of the first layer, aligned with the nav tabs (top-right) */
 .home-logo {
   position: fixed; /* stays top-left while scrolling */
-  top: 28px;
-  left: 32px;
+  top: 29px;   /* letters sit ~40px from the top, same as from the left */
+  left: 40px;
   z-index: var(--z-hud);
   display: inline-flex;
   align-items: center;
@@ -194,8 +194,8 @@
 
 @media (max-width: 520px) {
   .home-logo {
-    top: 20px;
-    left: 18px;
+    top: 13px;   /* letters ~24px from the top and left */
+    left: 24px;
     font-size: 0.95rem;
   }
 }

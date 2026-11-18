@@ -26,8 +26,8 @@ html.project-html {
 body.project-page ::selection { background: #111; color: #fff; }
 
 /* ---------- Header ---------- */
-:root { --project-header-h: 92px; } /* 28 + 36 + 28, matches .home-logo */
-@media (max-width: 520px) { :root { --project-header-h: 76px; } } /* 20 + 36 + 20 */
+:root { --project-header-h: 94px; } /* 29 + 36 + 29, matches .home-logo */
+@media (max-width: 520px) { :root { --project-header-h: 62px; } } /* 13 + 36 + 13 */
 
 .project-header {
   position: fixed; /* always visible while scrolling */
@@ -38,9 +38,9 @@ body.project-page ::selection { background: #111; color: #fff; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Logo sits exactly where the home-page logo does (top 28px + 36px box, left 32px) */
+  /* Logo sits exactly where the home-page logo does; Back mirrors it on the right */
   height: var(--project-header-h);
-  padding: 0 32px;
+  padding: 0 40px;
   background: #ffffff; /* solid: no blurred text ghosting behind the logo */
 }
 
@@ -347,6 +347,6 @@ body.project-page ::selection { background: #111; color: #fff; }
 
 /* Match the home-page logo on small phones (.home-logo: top 20px, left 18px, 0.95rem) */
 @media (max-width: 520px) {
-  .project-header { padding: 0 18px; }
+  .project-header { padding: 0 24px; }
   .project-logo { font-size: 0.95rem; }
 }
