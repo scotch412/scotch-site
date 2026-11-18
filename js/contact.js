@@ -53,14 +53,14 @@
     lastFocus = document.activeElement;
     form.hidden = false; done.hidden = true; status.textContent = ''; status.className = 'contact-status';
     wrap.hidden = false;
-    requestAnimationFrame(() => wrap.classList.add('is-open'));
+    requestAnimationFrame(() => requestAnimationFrame(() => wrap.classList.add('is-open'))); // let the closed state paint first
     document.documentElement.classList.add('contact-lock');
     setTimeout(() => form.elements.name.focus(), 60);
   }
   function close() {
     wrap.classList.remove('is-open');
     document.documentElement.classList.remove('contact-lock');
-    setTimeout(() => { wrap.hidden = true; }, 250);
+    setTimeout(() => { if (!wrap.classList.contains('is-open')) wrap.hidden = true; }, 700);
     if (lastFocus) lastFocus.focus();
   }
 
