@@ -5,15 +5,18 @@
  * no server needed). If sending fails, the address is copied to the clipboard instead.
  */
 (() => {
-  const trigger = document.getElementById('btn-copy-email');
-  if (!trigger) return;
+  const triggers = [...document.querySelectorAll('#btn-copy-email, [data-contact]')];
+  if (!triggers.length) return;
+  const trigger = triggers[0];
   const EMAIL = trigger.getAttribute('data-email') || 'lifeofscotch@gmail.com';
   const ENDPOINT = `https://formsubmit.co/ajax/${EMAIL}`;
   const feedback = document.getElementById('copy-feedback');
 
-  trigger.setAttribute('href', `mailto:${EMAIL}`); // fallback without JS
-  trigger.setAttribute('role', 'button');
-  trigger.title = 'Send me a message';
+  triggers.forEach((t) => {
+    t.setAttribute('href', `mailto:${EMAIL}`); // fallback without JS
+    t.setAttribute('role', 'button');
+    t.title = 'Send me a message';
+  });
 
   const wrap = document.createElement('div');
   wrap.className = 'contact-modal';
@@ -50,6 +53,9 @@
 
   function open(e) {
     if (e) e.preventDefault();
+    // data-contact="corner": small window in the bottom-right instead of centred
+    const t = e && e.currentTarget;
+    wrap.classList.toggle('contact-modal--corner', !!(t && t.getAttribute('data-contact') === 'corner'));
     lastFocus = document.activeElement;
     form.hidden = false; done.hidden = true; status.textContent = ''; status.className = 'contact-status';
     wrap.hidden = false;
@@ -75,7 +81,7 @@
     }
   }
 
-  trigger.addEventListener('click', open);
+  triggers.forEach((t) => t.addEventListener('click', open));
   wrap.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
   wrap.querySelector('.contact-copy').addEventListener('click', () => copyEmail());
   document.addEventListener('keydown', (e) => {
