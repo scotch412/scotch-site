@@ -198,14 +198,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const FLOAT_X = canHover ? 5 : 0;
     const FLOAT_ROT = canHover ? 0.35 : 0; // deg
     const STIFF = 170, DAMP = 20;       // spring (per second)
+    const PILL_H = 55;                  // px the title pill "hovers" above the card
 
     const cards = [...document.querySelectorAll('.work-layer')].map((layer, i) => {
       const hit = layer.querySelector('.work-card');
       const float = layer.querySelector('.work-card-float');
       const glass = layer.querySelector('.work-card-glass');
+      const pill = layer.querySelector('.work-pill');
       if (!hit || !float) return null;
       const k = {
-        layer, hit, float, glass, visible: false, hover: false,
+        layer, hit, float, glass, pill, visible: false, hover: false,
         phase: i * 1.7, // so neighbouring cards don't bob in sync
         // spring state: tiltX, tiltY, press (current + velocity), and targets
         s: { rx: 0, ry: 0, z: 0 }, v: { rx: 0, ry: 0, z: 0 }, t: { rx: 0, ry: 0, z: 0 },
@@ -268,6 +270,18 @@ document.addEventListener('DOMContentLoaded', () => {
           k.float.style.transform =
             `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, ${k.s.z.toFixed(2)}px) ` +
             `rotateX(${k.s.rx.toFixed(3)}deg) rotateY(${k.s.ry.toFixed(3)}deg) rotateZ(${fr.toFixed(3)}deg)`;
+          // Title pill floats above the card: as the card tilts, the raised pill shifts
+          // (parallax) and its shadow stays behind on the video, so they visibly separate.
+          if (k.pill && canHover) {
+            const lift = PILL_H * (1 + 0.6 * k.hoverAmt);
+            const dx = Math.sin(k.s.ry * Math.PI / 180) * lift;
+            const dy = -Math.sin(k.s.rx * Math.PI / 180) * lift;
+            const sc = 1 + 0.035 * k.hoverAmt;
+            k.pill.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
+            const sy = 6 + 6 * k.hoverAmt, blur = 16 + 12 * k.hoverAmt, a = 0.22 + 0.1 * k.hoverAmt;
+            k.pill.style.setProperty('--pill-shadow',
+              `${(-dx * 1.4).toFixed(1)}px ${(sy - dy * 1.4).toFixed(1)}px ${blur.toFixed(0)}px rgba(0, 0, 0, ${a.toFixed(3)})`);
+          }
         }
         requestAnimationFrame(frame);
       };
