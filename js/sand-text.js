@@ -19,11 +19,14 @@
 
   const isTouch = window.matchMedia('(hover: none)').matches;
   const TARGET = isTouch ? 5000 : 9500;  // approx. number of grains
-  const RADIUS = isTouch ? 60 : 85;      // px: how far the sweep reaches
-  const SWEEP = 0.3;                     // how much of the pointer's motion is passed on
-  const SCATTER = 0.9;                   // random spray
-  const RETURN = 0.0032;                 // spring back home (slow)
-  const FRICTION = 0.885;                // per frame at 60fps (sand stops quickly)
+  const RADIUS = isTouch ? 46 : 60;      // px: width of the "brush"
+  const BRUSH = 0.95;                    // how hard a pass flicks the grains
+  const SPREAD = 1.15;                   // sideways dispersion (0 = all straight ahead)
+  const SLIDE = 0.87;                    // per-frame friction while sliding (sand on a table)
+  const GRIT = 0.035;                    // extra constant friction: grains come to a dead stop
+  const REST = [30, 80];                 // frames a grain lies where it landed before drifting back
+  const RETURN = 0.032;                  // fraction of the way home per frame (slow drift)
+  const MAX_RETURN = 2.2;                // px/frame cap while drifting back (calm, no snapping)
 
   const canvas = document.createElement('canvas');
   canvas.className = 'sand-canvas';
@@ -31,7 +34,7 @@
   layer.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  let n = 0, hx, hy, x, y, vx, vy, grain, bucket;
+  let n = 0, hx, hy, x, y, vx, vy, grain, bucket, cool, rest;
   let size = 1, dpr = 1, W = 0, H = 0;
   let running = false, visible = true;
   let px = -1e4, py = -1e4, lastPx = null, lastPy = null, lastMove = 0;
@@ -92,6 +95,7 @@
     x = new Float32Array(n); y = new Float32Array(n);
     vx = new Float32Array(n); vy = new Float32Array(n);
     grain = new Float32Array(n); bucket = new Uint8Array(n);
+    cool = new Float32Array(n); rest = new Float32Array(n);
     for (let i = 0; i < n; i++) {
       hx[i] = x[i] = list[i * 2];
       hy[i] = y[i] = list[i * 2 + 1];
@@ -125,42 +129,72 @@
     const dt = Math.min(2.5, last ? (now - last) / 16.667 : 1); // in 60fps frames
     last = now;
 
-    // pointer motion since the last frame
-    let mvx = 0, mvy = 0;
-    if (lastPx !== null) { mvx = px - lastPx; mvy = py - lastPy; }
+    // the brush stroke since the last frame: segment (ax,ay) -> (px,py)
+    let ax = px, ay = py;
+    if (lastPx !== null) { ax = lastPx; ay = lastPy; }
     lastPx = px; lastPy = py;
-    const speed = Math.hypot(mvx, mvy);
-    if (speed > 60) { mvx *= 60 / speed; mvy *= 60 / speed; }
-    const sweeping = speed > 0.3;
+    let sx = px - ax, sy = py - ay;
+    const speed = Math.hypot(sx, sy);
+    const sweeping = speed > 0.4;
+    const ux = sweeping ? sx / speed : 0, uy = sweeping ? sy / speed : 0; // stroke direction
+    const nx = -uy, ny = ux;                                             // its normal
+    const kick = Math.min(speed, 45) * BRUSH;
+    const len2 = speed * speed || 1;
 
-    const fr = Math.pow(FRICTION, dt);
+    const fr = Math.pow(SLIDE, dt);
     const R2 = RADIUS * RADIUS;
     let energy = 0;
     for (let i = 0; i < n; i++) {
-      const g = grain[i];
-      if (sweeping) {
-        const dx = x[i] - px, dy = y[i] - py, d2 = dx * dx + dy * dy;
+      if (cool[i] > 0) cool[i] -= dt;
+
+      // 1. Brush: grains near the stroke get one flick (forward + random sideways), then
+      //    a short cooldown so they're knocked away instead of carried along.
+      if (sweeping && cool[i] <= 0) {
+        let t = ((x[i] - ax) * sx + (y[i] - ay) * sy) / len2;
+        t = t < 0 ? 0 : t > 1 ? 1 : t;
+        const dx = x[i] - (ax + sx * t), dy = y[i] - (ay + sy * t);
+        const d2 = dx * dx + dy * dy;
         if (d2 < R2) {
-          const d = Math.sqrt(d2) || 1;
-          const f = (1 - d / RADIUS); const f2 = f * f;
-          // drag each grain toward the pointer's velocity (never faster than the pointer),
-          // plus a little outward push and random spray so it scatters like sand
-          const k = Math.min(1, f2 * SWEEP * 2 * g);
-          vx[i] += (mvx * 0.8 - vx[i]) * k + ((dx / d) * 0.35 + (Math.random() - 0.5) * SCATTER * Math.min(speed, 20) * 0.08) * f2;
-          vy[i] += (mvy * 0.8 - vy[i]) * k + ((dy / d) * 0.35 + (Math.random() - 0.5) * SCATTER * Math.min(speed, 20) * 0.08) * f2;
+          const d = Math.sqrt(d2);
+          const f = 1 - d / RADIUS;
+          const g = grain[i];
+          const fwd = (0.25 + Math.random() * 0.95) * g;
+          // push sideways away from the stroke line, with randomness, so the sand fans out
+          const side = Math.sign(dx * nx + dy * ny || Math.random() - 0.5);
+          const lat = (side * 0.35 + (Math.random() - 0.5)) * SPREAD;
+          vx[i] += (ux * fwd + nx * lat) * kick * f;
+          vy[i] += (uy * fwd + ny * lat) * kick * f;
+          cool[i] = 10 + Math.random() * 10;
+          rest[i] = REST[0] + Math.random() * (REST[1] - REST[0]);
         }
       }
-      vx[i] += (hx[i] - x[i]) * RETURN * g * dt;
-      vy[i] += (hy[i] - y[i]) * RETURN * g * dt;
+
+      // 2. Slide and stop (viscous + constant friction)
       vx[i] *= fr; vy[i] *= fr;
+      const sp = Math.hypot(vx[i], vy[i]);
+      if (sp > 0) {
+        const ns = Math.max(0, sp - GRIT * dt);
+        vx[i] *= ns / sp; vy[i] *= ns / sp;
+      }
+
+      // 3. After resting a moment, drift slowly back home
+      if (rest[i] > 0) rest[i] -= dt;
+      else {
+        let rx = (hx[i] - x[i]) * RETURN * grain[i];
+        let ry = (hy[i] - y[i]) * RETURN * grain[i];
+        const rs = Math.hypot(rx, ry);
+        if (rs > MAX_RETURN) { rx *= MAX_RETURN / rs; ry *= MAX_RETURN / rs; }
+        x[i] += rx * dt; y[i] += ry * dt;
+      }
+
       x[i] += vx[i] * dt; y[i] += vy[i] * dt;
-      energy += Math.abs(vx[i]) + Math.abs(vy[i]) + Math.abs(hx[i] - x[i]) * 0.02 + Math.abs(hy[i] - y[i]) * 0.02;
+      energy += sp + Math.abs(hx[i] - x[i]) * 0.02 + Math.abs(hy[i] - y[i]) * 0.02 + (rest[i] > 0 ? 0.05 : 0);
     }
     draw();
 
     // Go to sleep once everything has settled
     if (!sweeping && now - lastMove > 250 && energy / Math.max(1, n) < 0.004) {
-      for (let i = 0; i < n; i++) { x[i] = hx[i]; y[i] = hy[i]; vx[i] = vy[i] = 0; }
+      for (let i = 0; i < n; i++) { x[i] = hx[i]; y[i] = hy[i]; vx[i] = vy[i] = 0; rest[i] = cool[i] = 0; }
       draw();
       running = false; last = 0;
       return;
