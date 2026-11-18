@@ -103,7 +103,7 @@ body.project-page ::selection { background: #111; color: #fff; }
   white-space: nowrap;
 }
 .project-date:empty { display: none; }
-.project-video      { order: 2; width: 100%; margin-top: clamp(24px, 3vw, 40px); }
+.project-video      { order: 2; width: 100%; margin-top: clamp(36px, 4.5vw, 64px); }
 .project-spots      { order: 3; width: 100%; }
 .project-credits    { order: 4; width: 100%; }
 .project-story::before {        /* the break between credits and everything after */
@@ -128,6 +128,15 @@ body.project-page ::selection { background: #111; color: #fff; }
   letter-spacing: var(--tracking-title);
   text-transform: none; /* as typed (sentence case) */
   color: #000;
+}
+/* Campaign / spot name first (big), brand or company underneath (smaller, muted) */
+.project-heading { min-width: 0; }
+.project-brand {
+  margin-top: 10px;
+  font-family: var(--project-body-font);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  line-height: 1.3;
+  color: rgba(0, 0, 0, 0.55);
 }
 .project-subtitle {
   margin-top: 18px;
