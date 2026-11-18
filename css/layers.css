@@ -810,3 +810,19 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   .work-anchor + .work-layer { padding-top: 40px; }
 }
 
+
+/* Last layer ("Reach out"): a sheet with rounded top corners that slides up over
+   the end of the films (overlaps the space under the last card). */
+#layer-5 {
+  --sheet-radius: 40px;
+  --sheet-overlap: 90px;
+  position: relative;
+  z-index: 30;
+  margin-top: calc(-1 * var(--sheet-overlap));
+  border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+  overflow: hidden;
+  box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.35);
+}
+@media (max-width: 760px) {
+  #layer-5 { --sheet-radius: 26px; --sheet-overlap: 28px; }
+}
