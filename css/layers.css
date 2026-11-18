@@ -679,6 +679,13 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   border: 0;
 }
 
+/* Last film: extra breathing room before the "Reach out" layer */
+.work-layer:has(+ .strata-layer:not(.work-layer)) {
+  --end-space: 120px;
+  min-height: calc(var(--layer-h) + var(--end-space));
+  padding-bottom: var(--end-space);
+}
+
 /* Phones: stacked glass cards, several on screen at once (no tilt, gentle float) */
 @media (max-width: 760px) {
   .work-layer {
@@ -796,4 +803,7 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
 }
 @media (max-width: 760px) {
   .layer-seam { --seam-h: 16lvh; }
+}
+@media (max-width: 760px) {
+  .work-layer:has(+ .strata-layer:not(.work-layer)) { min-height: 0; padding-bottom: 48px; }
 }
