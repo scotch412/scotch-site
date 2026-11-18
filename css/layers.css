@@ -483,19 +483,34 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
    -------------------------------------------------------------------------- */
 .work-anchor { height: 0; }
 
-.work-layer { background: #050505; }
+/* Layers stay transparent and let their backdrops spill past the edge vertically
+   (clipped sideways only), so neighbouring films cross-fade instead of meeting at a line. */
+.work-layer {
+  --blend: 28lvh;           /* height of the cross-fade between two films */
+  background: transparent;
+  overflow-x: clip;
+  overflow-y: visible;
+}
 
-/* Ambient backdrop: blurred poster fills the layer behind the card */
+/* Ambient backdrop: blurred poster behind the card, fading out at the bottom */
 .work-ambient {
   position: absolute;
-  inset: -8%;
+  top: 0;
+  left: -8%;
   width: 116%;
-  height: 116%;
+  max-width: none; /* base.css caps images at 100% */
+  height: 100%;
   object-fit: cover;
   filter: blur(48px) saturate(1.35) brightness(0.55);
-  transform: translateZ(0);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--blend), #000 calc(100% - var(--blend)), transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 var(--blend), #000 calc(100% - var(--blend)), transparent 100%);
   pointer-events: none;
   z-index: 0;
+}
+/* Every film after the first reaches up into the one above, fading in while it fades out */
+.work-layer + .work-layer .work-ambient {
+  top: calc(-1 * var(--blend));
+  height: calc(100% + var(--blend));
 }
 
 .work-card {
