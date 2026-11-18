@@ -1,14 +1,17 @@
 /**
  * SCOTCH — Sand headline (layer 0)
- * The first-layer headline is redrawn as thousands of sand grains on a canvas.
- * Moving the mouse (or a finger) through it sweeps the grains along in the
- * direction of travel; they then slowly drift back into the letters.
+ * At rest the first-layer headline looks like normal solid text. Brushing the
+ * mouse (or a finger) through it knocks grains of "sand" out of the letters:
+ * they fan out, slide and slow to a stop, then accelerate back home (ease-in, like
+ * being pulled by gravity) and merge back into the solid text.
+ *
+ * How it's drawn: a crisp copy of the text is painted on a canvas; every grain that
+ * has left home punches a small hole in that copy and is drawn as a particle
+ * instead. When it lands, the hole closes and the text is solid again.
  *
  * - The real <h1> stays in the page (SEO, screen readers, text selection) but is
- *   made transparent once the canvas is ready; its layout is used to place grains,
- *   so wrapping, size and letter-spacing always match the CSS.
- * - Typed arrays + one batched draw per alpha bucket; the loop sleeps when
- *   everything is at rest or the layer is off screen.
+ *   transparent; its layout places the grains, so wrapping/size always match the CSS.
+ * - The loop sleeps when everything is home or the layer is off screen.
  * - Skipped entirely for prefers-reduced-motion.
  */
 (() => {
@@ -22,43 +25,34 @@
   const RADIUS = isTouch ? 46 : 60;      // px: width of the "brush"
   const BRUSH = 0.95;                    // how hard a pass flicks the grains
   const SPREAD = 1.15;                   // sideways dispersion (0 = all straight ahead)
-  const SLIDE = 0.87;                    // per-frame friction while sliding (sand on a table)
-  const GRIT = 0.035;                    // extra constant friction: grains come to a dead stop
-  const REST = [30, 80];                 // frames a grain lies where it landed before drifting back
-  const RETURN = 0.032;                  // fraction of the way home per frame (slow drift)
-  const MAX_RETURN = 2.2;                // px/frame cap while drifting back (calm, no snapping)
+  const SLIDE = 0.87;                    // per-frame friction while sliding
+  const GRIT = 0.035;                    // extra constant friction so grains come to a stop
+  const HANG = [2, 10];                  // frames a grain hangs (stopped) before heading back
+  const BACK = [30, 50];                 // frames for the trip home (plus a little per px of distance)
+  const BACK_PER_PX = 0.1;
+  const easeIn = (u) => u * u * u;       // slow start, accelerating into place
 
   const canvas = document.createElement('canvas');
   canvas.className = 'sand-canvas';
   canvas.setAttribute('aria-hidden', 'true');
   layer.appendChild(canvas);
   const ctx = canvas.getContext('2d');
+  let solid = null; // crisp text at device resolution
 
-  let n = 0, hx, hy, x, y, vx, vy, grain, bucket, cool, rest;
-  let size = 1, dpr = 1, W = 0, H = 0;
+  // state: 0 = home (part of the solid text), 1 = sliding, 2 = returning
+  let n = 0, hx, hy, x, y, vx, vy, grain, bucket, cool, state, timer, sx, sy, dur;
+  let size = 1, hole = 2, dpr = 1, W = 0, H = 0, away = 0;
   let running = false, visible = true;
   let px = -1e4, py = -1e4, lastPx = null, lastPy = null, lastMove = 0;
 
-  // ---------- sample the heading into grain positions ----------
-  function build() {
-    const lr = layer.getBoundingClientRect();
-    W = lr.width; H = lr.height;
-    dpr = Math.min(2, window.devicePixelRatio || 1);
-    canvas.width = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
-
-    // Draw every character exactly where the browser laid it out
-    const S = 2; // oversample for cleaner edges
-    const off = document.createElement('canvas');
-    off.width = Math.ceil(W * S); off.height = Math.ceil(H * S);
-    const o = off.getContext('2d');
+  // ---------- paint the heading exactly where the browser laid it out ----------
+  function paintText(c, scale, lr) {
     const cs = getComputedStyle(heading);
-    o.scale(S, S);
-    o.fillStyle = '#fff';
-    o.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-    o.textBaseline = 'alphabetic';
-    const ascent = o.measureText('Hg').fontBoundingBoxAscent ?? parseFloat(cs.fontSize) * 0.8;
-
+    c.setTransform(scale, 0, 0, scale, 0, 0);
+    c.fillStyle = '#fff';
+    c.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    c.textBaseline = 'alphabetic';
+    const ascent = c.measureText('Hg').fontBoundingBoxAscent ?? parseFloat(cs.fontSize) * 0.8;
     const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
     const range = document.createRange();
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -67,18 +61,35 @@
         if (/\s/.test(t[i])) continue;
         range.setStart(node, i); range.setEnd(node, i + 1);
         const r = range.getBoundingClientRect();
-        if (!r.width) continue;
-        o.fillText(t[i], r.left - lr.left, r.top - lr.top + ascent);
+        if (r.width) c.fillText(t[i], r.left - lr.left, r.top - lr.top + ascent);
       }
     }
+  }
 
-    // Pick a grid step that gives roughly TARGET grains
+  function build() {
+    const lr = layer.getBoundingClientRect();
+    W = lr.width; H = lr.height;
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+
+    solid = document.createElement('canvas');
+    solid.width = canvas.width; solid.height = canvas.height;
+    paintText(solid.getContext('2d'), dpr, lr);
+
+    // Sample grain positions from an oversampled copy
+    const S = 2;
+    const off = document.createElement('canvas');
+    off.width = Math.ceil(W * S); off.height = Math.ceil(H * S);
+    const o = off.getContext('2d');
+    paintText(o, S, lr);
     const img = o.getImageData(0, 0, off.width, off.height).data;
     let filled = 0;
-    for (let i = 3; i < img.length; i += 4 * 4) if (img[i] > 128) filled++;
-    const area = (filled * 4) / (S * S); // filled CSS px²
+    for (let i = 3; i < img.length; i += 16) if (img[i] > 128) filled++;
+    const area = (filled * 4) / (S * S);
     const step = Math.max(0.7, Math.sqrt(area / TARGET));
     size = Math.max(1, step * 1.05);
+    hole = step * 1.9; // hole each missing grain leaves in the solid text
 
     const list = [];
     for (let gy = 0; gy < H; gy += step) {
@@ -86,23 +97,22 @@
         const jx = gx + (Math.random() - 0.5) * step, jy = gy + (Math.random() - 0.5) * step;
         const ix = Math.round(jx * S), iy = Math.round(jy * S);
         if (ix < 0 || iy < 0 || ix >= off.width || iy >= off.height) continue;
-        if (img[(iy * off.width + ix) * 4 + 3] > 110) list.push(jx, jy);
+        if (img[(iy * off.width + ix) * 4 + 3] > 90) list.push(jx, jy);
       }
     }
 
     n = list.length / 2;
-    hx = new Float32Array(n); hy = new Float32Array(n);
-    x = new Float32Array(n); y = new Float32Array(n);
-    vx = new Float32Array(n); vy = new Float32Array(n);
-    grain = new Float32Array(n); bucket = new Uint8Array(n);
-    cool = new Float32Array(n); rest = new Float32Array(n);
+    const F = () => new Float32Array(n);
+    hx = F(); hy = F(); x = F(); y = F(); vx = F(); vy = F();
+    grain = F(); cool = F(); timer = F(); sx = F(); sy = F(); dur = F();
+    bucket = new Uint8Array(n); state = new Uint8Array(n);
     for (let i = 0; i < n; i++) {
       hx[i] = x[i] = list[i * 2];
       hy[i] = y[i] = list[i * 2 + 1];
-      grain[i] = 0.55 + Math.random() * 0.9;        // each grain moves/returns a bit differently
+      grain[i] = 0.55 + Math.random() * 0.9;   // each grain moves a bit differently
       bucket[i] = Math.random() < 0.25 ? 0 : Math.random() < 0.5 ? 1 : 2; // brightness variation
     }
-
+    away = 0;
     heading.classList.add('is-sand');
     draw();
   }
@@ -110,13 +120,25 @@
   // ---------- draw ----------
   const ALPHA = [0.62, 0.84, 1];
   function draw() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (solid) ctx.drawImage(solid, 0, 0);
+    if (!away) return;
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
+    // holes where grains have left
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    const ho = (hole - size) / 2;
+    for (let i = 0; i < n; i++) if (state[i]) ctx.rect(hx[i] - ho, hy[i] - ho, hole, hole);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+    // the loose grains
     ctx.fillStyle = '#fff';
     for (let b = 0; b < 3; b++) {
       ctx.globalAlpha = ALPHA[b];
       ctx.beginPath();
-      for (let i = 0; i < n; i++) if (bucket[i] === b) ctx.rect(x[i], y[i], size, size);
+      for (let i = 0; i < n; i++) if (state[i] && bucket[i] === b) ctx.rect(x[i], y[i], size, size);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
@@ -133,72 +155,72 @@
     let ax = px, ay = py;
     if (lastPx !== null) { ax = lastPx; ay = lastPy; }
     lastPx = px; lastPy = py;
-    let sx = px - ax, sy = py - ay;
-    const speed = Math.hypot(sx, sy);
+    const bx = px - ax, by = py - ay;
+    const speed = Math.hypot(bx, by);
     const sweeping = speed > 0.4;
-    const ux = sweeping ? sx / speed : 0, uy = sweeping ? sy / speed : 0; // stroke direction
-    const nx = -uy, ny = ux;                                             // its normal
+    const ux = sweeping ? bx / speed : 0, uy = sweeping ? by / speed : 0;
+    const nx = -uy, ny = ux;
     const kick = Math.min(speed, 45) * BRUSH;
     const len2 = speed * speed || 1;
-
     const fr = Math.pow(SLIDE, dt);
     const R2 = RADIUS * RADIUS;
-    let energy = 0;
+
+    away = 0;
     for (let i = 0; i < n; i++) {
       if (cool[i] > 0) cool[i] -= dt;
 
-      // 1. Brush: grains near the stroke get one flick (forward + random sideways), then
-      //    a short cooldown so they're knocked away instead of carried along.
+      // 1. Brush: one flick per pass (forward + fanned sideways), then a short cooldown
       if (sweeping && cool[i] <= 0) {
-        let t = ((x[i] - ax) * sx + (y[i] - ay) * sy) / len2;
+        let t = ((x[i] - ax) * bx + (y[i] - ay) * by) / len2;
         t = t < 0 ? 0 : t > 1 ? 1 : t;
-        const dx = x[i] - (ax + sx * t), dy = y[i] - (ay + sy * t);
+        const dx = x[i] - (ax + bx * t), dy = y[i] - (ay + by * t);
         const d2 = dx * dx + dy * dy;
         if (d2 < R2) {
-          const d = Math.sqrt(d2);
-          const f = 1 - d / RADIUS;
-          const g = grain[i];
-          const fwd = (0.25 + Math.random() * 0.95) * g;
-          // push sideways away from the stroke line, with randomness, so the sand fans out
+          const f = 1 - Math.sqrt(d2) / RADIUS;
+          const fwd = (0.25 + Math.random() * 0.95) * grain[i];
           const side = Math.sign(dx * nx + dy * ny || Math.random() - 0.5);
           const lat = (side * 0.35 + (Math.random() - 0.5)) * SPREAD;
           vx[i] += (ux * fwd + nx * lat) * kick * f;
           vy[i] += (uy * fwd + ny * lat) * kick * f;
           cool[i] = 10 + Math.random() * 10;
-          rest[i] = REST[0] + Math.random() * (REST[1] - REST[0]);
+          state[i] = 1;
+          timer[i] = HANG[0] + Math.random() * (HANG[1] - HANG[0]);
         }
       }
 
-      // 2. Slide and stop (viscous + constant friction)
-      vx[i] *= fr; vy[i] *= fr;
-      const sp = Math.hypot(vx[i], vy[i]);
-      if (sp > 0) {
-        const ns = Math.max(0, sp - GRIT * dt);
-        vx[i] *= ns / sp; vy[i] *= ns / sp;
+      const st = state[i];
+      if (st === 1) {
+        // 2. Slide and slow to a stop
+        vx[i] *= fr; vy[i] *= fr;
+        const sp = Math.hypot(vx[i], vy[i]);
+        if (sp > 0) { const ns = Math.max(0, sp - GRIT * dt); vx[i] *= ns / sp; vy[i] *= ns / sp; }
+        x[i] += vx[i] * dt; y[i] += vy[i] * dt;
+        if (sp < 0.12) {
+          timer[i] -= dt;
+          if (timer[i] <= 0) {
+            // 3. Start the trip home from a standstill
+            state[i] = 2; vx[i] = vy[i] = 0;
+            sx[i] = x[i]; sy[i] = y[i]; timer[i] = 0;
+            const dist = Math.hypot(hx[i] - x[i], hy[i] - y[i]);
+            dur[i] = (BACK[0] + Math.random() * (BACK[1] - BACK[0]) + dist * BACK_PER_PX) / (0.75 + grain[i] * 0.3);
+          }
+        }
+        away++;
+      } else if (st === 2) {
+        // 4. Accelerate back into place (ease-in), then rejoin the solid text
+        timer[i] += dt;
+        const u = Math.min(1, timer[i] / dur[i]);
+        const e = easeIn(u);
+        x[i] = sx[i] + (hx[i] - sx[i]) * e;
+        y[i] = sy[i] + (hy[i] - sy[i]) * e;
+        if (u >= 1) { state[i] = 0; x[i] = hx[i]; y[i] = hy[i]; }
+        else away++;
       }
-
-      // 3. After resting a moment, drift slowly back home
-      if (rest[i] > 0) rest[i] -= dt;
-      else {
-        let rx = (hx[i] - x[i]) * RETURN * grain[i];
-        let ry = (hy[i] - y[i]) * RETURN * grain[i];
-        const rs = Math.hypot(rx, ry);
-        if (rs > MAX_RETURN) { rx *= MAX_RETURN / rs; ry *= MAX_RETURN / rs; }
-        x[i] += rx * dt; y[i] += ry * dt;
-      }
-
-      x[i] += vx[i] * dt; y[i] += vy[i] * dt;
-      energy += sp + Math.abs(hx[i] - x[i]) * 0.02 + Math.abs(hy[i] - y[i]) * 0.02 + (rest[i] > 0 ? 0.05 : 0);
     }
     draw();
 
-    // Go to sleep once everything has settled
-    if (!sweeping && now - lastMove > 250 && energy / Math.max(1, n) < 0.004) {
-      for (let i = 0; i < n; i++) { x[i] = hx[i]; y[i] = hy[i]; vx[i] = vy[i] = 0; rest[i] = cool[i] = 0; }
-      draw();
-      running = false; last = 0;
-      return;
-    }
+    // Sleep once every grain is home and the pointer has stopped
+    if (!away && now - lastMove > 250) { running = false; last = 0; return; }
     requestAnimationFrame(frame);
   }
   function wake() {
@@ -210,12 +232,12 @@
   // ---------- input ----------
   function onMove(e) {
     const r = layer.getBoundingClientRect();
-    const nx = e.clientX - r.left, ny = e.clientY - r.top;
-    if (nx < -RADIUS || ny < -RADIUS || nx > r.width + RADIUS || ny > r.height + RADIUS) {
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    if (mx < -RADIUS || my < -RADIUS || mx > r.width + RADIUS || my > r.height + RADIUS) {
       lastPx = null; return;
     }
-    if (lastPx === null) { lastPx = nx; lastPy = ny; }
-    px = nx; py = ny;
+    if (lastPx === null) { lastPx = mx; lastPy = my; }
+    px = mx; py = my;
     lastMove = performance.now();
     wake();
   }
@@ -230,8 +252,6 @@
   }).observe(layer);
 
   let rt;
-  const rebuild = () => { clearTimeout(rt); rt = setTimeout(build, 150); };
-  new ResizeObserver(rebuild).observe(layer);
-
+  new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(build, 150); }).observe(layer);
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(build);
 })();
