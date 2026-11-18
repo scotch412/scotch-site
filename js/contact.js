@@ -49,6 +49,15 @@
   const done = wrap.querySelector('.contact-done');
   const status = wrap.querySelector('.contact-status');
   const send = wrap.querySelector('.contact-form .contact-send');
+  // Message box grows with what they type (no drag handle)
+  const msg = form.elements.message;
+  const grow = () => {
+    msg.style.height = 'auto';
+    const max = window.innerHeight * 0.45;
+    msg.style.height = Math.min(msg.scrollHeight + 2, max) + 'px';
+    msg.style.overflowY = msg.scrollHeight + 2 > max ? 'auto' : 'hidden';
+  };
+  msg.addEventListener('input', grow);
   let lastFocus = null;
 
   function open(e) {
@@ -122,7 +131,7 @@
       });
       const j = await res.json().catch(() => ({}));
       if (!res.ok || String(j.success) !== 'true') throw new Error(j.message || 'send failed');
-      form.reset();
+      form.reset(); msg.style.height = '';
       form.hidden = true; done.hidden = false;
       done.querySelector('button').focus();
     } catch (err) {

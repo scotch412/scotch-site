@@ -94,7 +94,7 @@ html.contact-lock { overflow: hidden; }
   color: #fff;
   font: inherit;
   font-size: 1rem;
-  resize: vertical;
+  resize: none;           /* no drag handle; the message box grows as they type (js/contact.js) */
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
 }
@@ -156,3 +156,9 @@ html.contact-lock { overflow: hidden; }
 }
 .contact-modal--corner .contact-field input,
 .contact-modal--corner .contact-field textarea { background: rgba(255, 255, 255, 0.07); }
+
+.contact-field textarea {
+  min-height: 132px;        /* ~5 lines to start */
+  max-height: 45vh;         /* then scrolls inside */
+  overflow-y: hidden;
+}
