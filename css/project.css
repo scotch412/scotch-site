@@ -224,25 +224,24 @@ body.project-page ::selection { background: #111; color: #fff; }
 }
 
 /* Campaign spot switcher (only rendered for multi-spot films) */
-.project-spots {
+.project-spots {               /* other spots share the full width of the video */
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 14px;
+  gap: clamp(8px, 1.2vw, 14px);
+  margin-top: clamp(10px, 1.2vw, 14px);
 }
 .project-spot {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 0 0 130px;
-  width: 130px;
+  flex: 1 1 0;
+  min-width: 0;
   padding: 0;
   background: none;
   border: 0;
   cursor: pointer;
   text-align: left;
   font-family: var(--project-body-font);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: rgba(0, 0, 0, 0.45);
@@ -256,6 +255,8 @@ body.project-page ::selection { background: #111; color: #fff; }
 .project-spot.is-active { color: #000; }
 /* selection drawn inside the thumbnail so both spots are exactly the same size */
 .project-spot.is-active img { outline: 2px solid #000; outline-offset: -2px; }
+.project-spot img { transition: opacity 0.2s ease; }
+.project-spot:not(.is-active):hover img { opacity: 0.8; }
 
 /* ---------- Credits & details (right, under the video) ----------
    Stacked sections: rule on top, small uppercase label, details underneath.
@@ -338,12 +339,10 @@ body.project-page ::selection { background: #111; color: #fff; }
 
 /* ---------- Tablet / phone ---------- */
 @media (max-width: 760px) {
-  .project-video { margin-top: 24px; }
   .project-story::before { margin: 48px 0 32px; }
 }
 @media (max-width: 640px) {
   .project-bts { grid-template-columns: 1fr; }
-  .project-spot { width: calc(50% - 7px); }
 }
 
 /* Match the home-page logo on small phones (.home-logo: top 20px, left 18px, 0.95rem) */
