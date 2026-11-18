@@ -92,7 +92,8 @@ body.project-page ::selection { background: #111; color: #fff; }
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-end;         /* fallback */
+  align-items: last baseline;    /* date sits on the same line as the brand under the title */
   gap: 24px;
 }
 .project-date {
