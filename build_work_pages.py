@@ -156,12 +156,20 @@ def layer_html(i, f):
     else:
         preview = ""
     return f'''      <section class="strata-layer work-layer" id="work-{f["key"]}" aria-label="Work: {e(f["title"])}" {preview}>
-        <div class="plane-media">
-          <img src="{f["poster"]}" alt="" loading="lazy">
-        </div>
-        <a class="work-layer-link" href="work/{f["key"]}.html" aria-label="View {e(f["title"])}"></a>
-        <div class="work-pill">
-          <h2 class="work-pill-title">{e(f.get("pillTitle") or f["title"])}</h2>
+        <img class="work-ambient" src="{f["poster"]}" alt="" aria-hidden="true" loading="lazy">
+        <div class="work-card">
+          <div class="work-card-float">
+            <div class="work-card-glass">
+              <div class="plane-media">
+                <img src="{f["poster"]}" alt="" loading="lazy">
+              </div>
+              <div class="work-pill">
+                <h2 class="work-pill-title">{e(f.get("pillTitle") or f["title"])}</h2>
+              </div>
+              <span class="work-glare" aria-hidden="true"></span>
+            </div>
+          </div>
+          <a class="work-layer-link" href="work/{f["key"]}.html" aria-label="View {e(f["title"])}"></a>
         </div>
       </section>
 '''

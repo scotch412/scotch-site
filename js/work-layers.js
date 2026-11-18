@@ -154,8 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
       c.strict = !canHover;
       controllers.set(layer, c);
       if (canHover) {
-        layer.addEventListener('mouseenter', c.play);
-        layer.addEventListener('mouseleave', c.pause);
+        // Hover target is the card's untransformed hit area (falls back to the layer)
+        const hit = layer.querySelector('.work-card') || layer;
+        hit.addEventListener('mouseenter', c.play);
+        hit.addEventListener('mouseleave', c.pause);
       }
     });
 
@@ -181,6 +183,95 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }, { threshold: [0, 0.6] });
       controllers.forEach((_, layer) => playIO.observe(layer));
+    }
+  }
+
+  // ---------- 1a. Floating glass cards ----------
+  // Each work card drifts gently (float) and, under a mouse, tilts so the spot under
+  // the cursor is "pressed back" into the page. One rAF loop, springs for smoothness,
+  // only cards on screen are updated, and only `transform` is written.
+  {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const TILT = 7;        // max degrees
+    const PRESS = 26;      // px pushed back (translateZ) while hovered
+    const FLOAT_Y = canHover ? 9 : 3;   // px
+    const FLOAT_X = canHover ? 5 : 0;
+    const FLOAT_ROT = canHover ? 0.35 : 0; // deg
+    const STIFF = 170, DAMP = 20;       // spring (per second)
+
+    const cards = [...document.querySelectorAll('.work-layer')].map((layer, i) => {
+      const hit = layer.querySelector('.work-card');
+      const float = layer.querySelector('.work-card-float');
+      const glass = layer.querySelector('.work-card-glass');
+      if (!hit || !float) return null;
+      const k = {
+        layer, hit, float, glass, visible: false, hover: false,
+        phase: i * 1.7, // so neighbouring cards don't bob in sync
+        // spring state: tiltX, tiltY, press (current + velocity), and targets
+        s: { rx: 0, ry: 0, z: 0 }, v: { rx: 0, ry: 0, z: 0 }, t: { rx: 0, ry: 0, z: 0 },
+        hoverAmt: 0,
+      };
+      if (canHover && !reduceMotion) {
+        hit.addEventListener('pointerenter', () => { k.hover = true; layer.classList.add('is-hovered'); });
+        hit.addEventListener('pointerleave', () => {
+          k.hover = false; layer.classList.remove('is-hovered');
+          k.t.rx = k.t.ry = k.t.z = 0;
+        });
+        hit.addEventListener('pointermove', (e) => {
+          const r = hit.getBoundingClientRect();
+          const px = ((e.clientX - r.left) / r.width) * 2 - 1;  // -1 … 1
+          const py = ((e.clientY - r.top) / r.height) * 2 - 1;
+          k.t.ry = px * TILT;     // right side goes back when the cursor is on the right
+          k.t.rx = -py * TILT;    // bottom goes back when the cursor is at the bottom
+          k.t.z = -PRESS;
+          if (glass) {
+            glass.style.setProperty('--gx', ((px + 1) * 50).toFixed(1) + '%');
+            glass.style.setProperty('--gy', ((py + 1) * 50).toFixed(1) + '%');
+          }
+        });
+      } else if (canHover) {
+        hit.addEventListener('pointerenter', () => layer.classList.add('is-hovered'));
+        hit.addEventListener('pointerleave', () => layer.classList.remove('is-hovered'));
+      }
+      return k;
+    }).filter(Boolean);
+
+    if (cards.length && !reduceMotion) {
+      const vis = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          const k = cards.find((c) => c.layer === en.target);
+          if (k) k.visible = en.isIntersecting;
+        });
+      }, { rootMargin: '10% 0px' });
+      cards.forEach((k) => vis.observe(k.layer));
+
+      let last = performance.now();
+      const frame = (now) => {
+        const dt = Math.min(0.05, (now - last) / 1000); // clamp after tab switches
+        last = now;
+        const time = now / 1000;
+        for (const k of cards) {
+          if (!k.visible) continue;
+          // springs toward the target tilt/press
+          for (const key of ['rx', 'ry', 'z']) {
+            const a = STIFF * (k.t[key] - k.s[key]) - DAMP * k.v[key];
+            k.v[key] += a * dt;
+            k.s[key] += k.v[key] * dt;
+          }
+          // float calms down a little while hovered so the card is easy to aim at
+          k.hoverAmt += ((k.hover ? 1 : 0) - k.hoverAmt) * Math.min(1, dt * 4);
+          const amp = 1 - 0.55 * k.hoverAmt;
+          const ph = k.phase;
+          const fy = Math.sin(time * 0.95 + ph) * FLOAT_Y * amp;
+          const fx = Math.sin(time * 0.61 + ph * 1.3) * FLOAT_X * amp;
+          const fr = Math.sin(time * 0.73 + ph * 0.7) * FLOAT_ROT * amp;
+          k.float.style.transform =
+            `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, ${k.s.z.toFixed(2)}px) ` +
+            `rotateX(${k.s.rx.toFixed(3)}deg) rotateY(${k.s.ry.toFixed(3)}deg) rotateZ(${fr.toFixed(3)}deg)`;
+        }
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
     }
   }
 
