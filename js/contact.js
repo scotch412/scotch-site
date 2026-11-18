@@ -27,7 +27,7 @@
       <button class="contact-x" type="button" aria-label="Close" data-close>&times;</button>
       <form class="contact-form" novalidate>
         <h3 class="contact-title" id="contact-title">Hit me up</h3>
-        <label class="contact-field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
+        <label class="contact-field"><span>What do they call you?</span><input name="name" type="text" autocomplete="name" required></label>
         <label class="contact-field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
         <label class="contact-field"><span>Message</span><textarea name="message" rows="5" required></textarea></label>
         <input class="contact-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
