@@ -486,7 +486,11 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
 /* Layers stay transparent and let their backdrops spill past the edge vertically
    (clipped sideways only), so neighbouring films cross-fade instead of meeting at a line. */
 .work-layer {
-  --blend: 46lvh;           /* height of the cross-fade between two films */
+  --card-w: min(80vw, calc((100lvh - 200px) * 16 / 9), 1400px);
+  --card-gap: 150px;        /* space between two films (desktop) */
+  --layer-h: calc(var(--card-w) * 9 / 16 + var(--card-gap));
+  --blend: calc(var(--layer-h) * 0.45); /* height of the cross-fade between two films */
+  min-height: var(--layer-h); /* shorter than a full screen so films sit closer together */
   background: transparent;
   overflow-x: clip;
   overflow-y: visible;
@@ -542,7 +546,6 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
 }
 
 .work-card {
-  --card-w: min(80vw, calc((100lvh - 200px) * 16 / 9), 1400px);
   position: relative;
   z-index: 2;
   width: var(--card-w);
