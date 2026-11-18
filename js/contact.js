@@ -26,7 +26,7 @@
     <div class="contact-card" role="dialog" aria-modal="true" aria-labelledby="contact-title">
       <button class="contact-x" type="button" aria-label="Close" data-close>&times;</button>
       <form class="contact-form" novalidate>
-        <h3 class="contact-title" id="contact-title">Send me a message</h3>
+        <h3 class="contact-title" id="contact-title">Hit me up</h3>
         <label class="contact-field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
         <label class="contact-field"><span>Email</span><input name="email" type="email" autocomplete="email" required></label>
         <label class="contact-field"><span>Message</span><textarea name="message" rows="5" required></textarea></label>
