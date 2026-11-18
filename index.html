@@ -19,7 +19,7 @@
 
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=1794968257">
-  <link rel="stylesheet" href="css/layers.css?v=1794967858">
+  <link rel="stylesheet" href="css/layers.css?v=1794968676">
   <link rel="stylesheet" href="css/components.css?v=1794967333">
   <link rel="stylesheet" href="css/contact.css?v=1794967333">
 </head>
@@ -79,7 +79,9 @@
       <section class="strata-layer" id="layer-portrait" aria-label="Layer: CineStill 800T Field Scout">
         <!-- Sub-Plane: Media -->
         <div class="plane-media">
-          <img src="assets/media/cinestill-portrait-web.jpg" alt="CineStill 800T 35mm film portrait with sprockets" loading="lazy">
+          <div class="portrait-bg"><img src="assets/media/cinestill-portrait-bg.jpg?v=1794968676" alt="CineStill 800T 35mm film portrait with sprockets" loading="lazy"></div>
+          <!-- Scotch cut out of the photo, on his own layer for a parallax depth effect (js/portrait-depth.js) -->
+          <div class="portrait-fg" aria-hidden="true"><img src="assets/media/cinestill-portrait-fg.webp?v=1794968676" alt="" loading="lazy"></div>
           <span class="depth-plane-label depth-label-bg">PLATE: CINESTILL 800T [Z: -160PX]</span>
         </div>
 
@@ -371,6 +373,7 @@
   <script src="js/cycle-words.js?v=1793650550"></script>
   <script src="js/main.js?v=1794966749"></script>
   <script src="js/work-layers.js?v=1794964551"></script>
+  <script src="js/portrait-depth.js?v=1794968676"></script>
   <script src="js/sand-text.js?v=1794967798"></script>
   <script src="js/contact.js?v=1794968143"></script>
 </body>
