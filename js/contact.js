@@ -75,7 +75,7 @@
   function close() {
     wrap.classList.remove('is-open');
     document.documentElement.classList.remove('contact-lock');
-    setTimeout(() => { if (!wrap.classList.contains('is-open')) wrap.hidden = true; }, 700);
+    setTimeout(() => { if (!wrap.classList.contains('is-open')) wrap.hidden = true; }, 900);
     if (lastFocus) lastFocus.focus();
   }
 

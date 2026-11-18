@@ -10,23 +10,20 @@ html.contact-lock { overflow: hidden; }
   place-items: center;
   padding: 20px;
 }
-/* Backdrop eases in: blur and darkness ramp up together (and back down on close) */
+/* Backdrop: the blur + darkening are fixed and the whole layer fades in. Fading
+   opacity is GPU-cheap and perfectly smooth (animating the blur radius itself
+   re-renders the blur every frame and can stutter). */
 .contact-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition:
-    background 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    backdrop-filter 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    -webkit-backdrop-filter 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.contact-modal.is-open .contact-backdrop {
   background: rgba(0, 0, 0, 0.38);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
+.contact-modal.is-open .contact-backdrop { opacity: 1; }
 .contact-card {
   position: relative;
   width: min(460px, 100%);
@@ -42,15 +39,16 @@ html.contact-lock { overflow: hidden; }
     inset 0 1px 1px rgba(255, 255, 255, 0.5),
     inset 0 -1px 2px rgba(255, 255, 255, 0.1);
   opacity: 0;
-  transform: translateY(16px) scale(0.98);
+  transform: translate3d(0, 22px, 0) scale(0.97);
+  will-change: opacity, transform;
   transition:
-    opacity 0.45s ease,
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .contact-modal.is-open .contact-card {
   opacity: 1;
   transform: none;
-  transition-delay: 0.08s; /* card arrives just after the backdrop starts */
+  transition-delay: 0.1s, 0.1s; /* card arrives just after the backdrop starts */
 }
 .contact-x {
   position: absolute;
