@@ -194,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const TILT = 7;        // max degrees
     const PRESS = 26;      // px pushed back (translateZ) while hovered
-    const FLOAT_Y = canHover ? 9 : 3;   // px
-    const FLOAT_X = canHover ? 5 : 0;
-    const FLOAT_ROT = canHover ? 0.35 : 0; // deg
+    const FLOAT_Y = canHover ? 6 : 2;   // px
+    const FLOAT_X = canHover ? 3 : 0;
+    const FLOAT_ROT = canHover ? 0.22 : 0; // deg
     const STIFF = 170, DAMP = 20;       // spring (per second)
     const PILL_H = 55;                  // px the title pill "hovers" above the card
 
