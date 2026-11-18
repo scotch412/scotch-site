@@ -132,7 +132,7 @@ body.project-page ::selection { background: #111; color: #fff; }
 /* Campaign / spot name first (big), brand or company underneath (smaller, muted) */
 .project-heading { min-width: 0; }
 .project-brand {
-  margin-top: 10px;
+  margin-top: 4px;
   font-family: var(--project-body-font);
   font-size: clamp(1rem, 1.3vw, 1.2rem);
   line-height: 1.3;
