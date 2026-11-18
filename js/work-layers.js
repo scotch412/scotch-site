@@ -192,8 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // only cards on screen are updated, and only `transform` is written.
   {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const TILT = 7;        // max degrees
-    const PRESS = 26;      // px pushed back (translateZ) while hovered
+    const TILT = 4;        // max degrees
+    const PRESS = 14;      // px pushed back (translateZ) while hovered
     const FLOAT_Y = canHover ? 6 : 2;   // px
     const FLOAT_X = canHover ? 3 : 0;
     const FLOAT_ROT = canHover ? 0.22 : 0; // deg
