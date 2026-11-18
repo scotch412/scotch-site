@@ -771,3 +771,29 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   pointer-events: none;
 }
 .statement-text.is-sand { color: transparent; }
+
+/* Seam between two layers: a band centred on the boundary that blurs and darkens
+   what's behind it, fading in and out (progressive blur), so the layers melt together. */
+.layer-seam {
+  --seam-h: 36lvh;
+  position: relative;
+  height: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.layer-seam::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--seam-h) / -2);
+  height: var(--seam-h);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0) 100%);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.35) 20%, #000 42%, #000 58%, rgba(0,0,0,0.35) 80%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.35) 20%, #000 42%, #000 58%, rgba(0,0,0,0.35) 80%, transparent 100%);
+}
+@media (max-width: 760px) {
+  .layer-seam { --seam-h: 16lvh; }
+}
