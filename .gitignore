@@ -105,3 +105,6 @@ assets/fonts/Helvetica/
 
 # Agent handoff notes (local only; not published)
 HANDOFF.md
+
+# Local editing hub (separate private repo scotch412/scotch-hub)
+hub/
