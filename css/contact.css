@@ -62,9 +62,19 @@ html.contact-lock { overflow: hidden; }
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  font-size: 22px;
-  line-height: 1;
   cursor: pointer;
+  display: grid;          /* icon dead-centre in the circle */
+  place-items: center;
+  padding: 0;
+}
+.contact-x svg {
+  width: 12px;
+  height: 12px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  fill: none;
 }
 .contact-x:hover { background: rgba(255, 255, 255, 0.22); }
 .contact-title {

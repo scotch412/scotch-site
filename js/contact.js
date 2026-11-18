@@ -24,7 +24,7 @@
   wrap.innerHTML = `
     <div class="contact-backdrop" data-close></div>
     <div class="contact-card" role="dialog" aria-modal="true" aria-labelledby="contact-title">
-      <button class="contact-x" type="button" aria-label="Close" data-close>&times;</button>
+      <button class="contact-x" type="button" aria-label="Close" data-close><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2 L12 12 M12 2 L2 12"/></svg></button>
       <form class="contact-form" novalidate>
         <h3 class="contact-title" id="contact-title">Hit me up</h3>
         <label class="contact-field"><span>Name</span><input name="name" type="text" autocomplete="name" required></label>
