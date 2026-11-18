@@ -810,13 +810,3 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
   .work-anchor + .work-layer { padding-top: 40px; }
 }
 
-/* Portrait layer depth: Scotch (cut-out) floats over a clean plate of the room.
-   The cut-out's <img> gets the same sizing rules as the background image
-   (#layer-portrait .plane-media img), so the two always line up exactly. */
-.portrait-bg,
-.portrait-fg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  will-change: transform;
-}
