@@ -15,13 +15,20 @@
  * - Skipped entirely for prefers-reduced-motion.
  */
 (() => {
-  const layer = document.getElementById('layer-0');
-  const heading = layer && layer.querySelector('.statement-text');
-  if (!layer || !heading) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // Layers whose headline becomes sand
+  ['layer-0', 'layer-portrait'].forEach((id) => {
+    const layer = document.getElementById(id);
+    const heading = layer && layer.querySelector('.statement-text');
+    if (layer && heading) sand(layer, heading);
+  });
+})();
+
+function sand(layer, heading) {
 
   const isTouch = window.matchMedia('(hover: none)').matches;
-  const TARGET = isTouch ? 5000 : 9500;  // approx. number of grains
+  const STEP = isTouch ? 1.15 : 1.0;     // px between grains (finer = more grains)
+  const MAX_GRAINS = isTouch ? 8000 : 22000;
   const RADIUS = isTouch ? 46 : 60;      // px: width of the "brush"
   const BRUSH = 0.95;                    // how hard a pass flicks the grains
   const SPREAD = 1.15;                   // sideways dispersion (0 = all straight ahead)
@@ -47,15 +54,16 @@
 
   // ---------- paint the heading exactly where the browser laid it out ----------
   function paintText(c, scale, lr) {
-    const cs = getComputedStyle(heading);
     c.setTransform(scale, 0, 0, scale, 0, 0);
     c.fillStyle = '#fff';
-    c.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     c.textBaseline = 'alphabetic';
-    const ascent = c.measureText('Hg').fontBoundingBoxAscent ?? parseFloat(cs.fontSize) * 0.8;
     const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT);
     const range = document.createRange();
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      // each text run uses its own element's font (e.g. a bigger emphasised word)
+      const cs = getComputedStyle(node.parentElement);
+      c.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const ascent = c.measureText('Hg').fontBoundingBoxAscent ?? parseFloat(cs.fontSize) * 0.8;
       const t = node.textContent;
       for (let i = 0; i < t.length; i++) {
         if (/\s/.test(t[i])) continue;
@@ -87,7 +95,7 @@
     let filled = 0;
     for (let i = 3; i < img.length; i += 16) if (img[i] > 128) filled++;
     const area = (filled * 4) / (S * S);
-    const step = Math.max(0.7, Math.sqrt(area / TARGET));
+    const step = Math.max(STEP, Math.sqrt(area / MAX_GRAINS));
     size = Math.max(1, step * 1.05);
     hole = step * 1.9; // hole each missing grain leaves in the solid text
 
@@ -254,4 +262,4 @@
   let rt;
   new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(build, 150); }).observe(layer);
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(build);
-})();
+}
