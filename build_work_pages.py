@@ -166,7 +166,6 @@ def layer_html(i, f):
               <div class="work-pill">
                 <h2 class="work-pill-title">{e(f.get("pillTitle") or f["title"])}</h2>
               </div>
-              <span class="work-glare" aria-hidden="true"></span>
             </div>
           </div>
           <a class="work-layer-link" href="work/{f["key"]}.html" aria-label="View {e(f["title"])}"></a>

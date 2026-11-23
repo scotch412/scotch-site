@@ -226,10 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
           k.t.ry = px * TILT;     // right side goes back when the cursor is on the right
           k.t.rx = -py * TILT;    // bottom goes back when the cursor is at the bottom
           k.t.z = -PRESS;
-          if (glass) {
-            glass.style.setProperty('--gx', ((px + 1) * 50).toFixed(1) + '%');
-            glass.style.setProperty('--gy', ((py + 1) * 50).toFixed(1) + '%');
-          }
         });
       } else if (canHover) {
         hit.addEventListener('pointerenter', () => layer.classList.add('is-hovered'));
