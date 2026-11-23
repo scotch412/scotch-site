@@ -479,7 +479,7 @@ body.depth-mode-active .tv-stage-layer .tv-frame-overlay {
    js/work-layers.js drives the floating + hover physics (one rAF loop, transform only):
      .work-card        untransformed hit area (holds the link, so hover never jitters)
      .work-card-float  moved by JS: float drift + tilt "pressed back" under the cursor
-     .work-card-glass  glass frame around the media; .work-glare follows the cursor
+     .work-card-glass  glass frame around the media
    -------------------------------------------------------------------------- */
 .work-anchor { height: 0; }
 
