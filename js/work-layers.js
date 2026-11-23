@@ -186,17 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- 1a. Floating glass cards ----------
-  // Each work card drifts gently (float) and, under a mouse, tilts so the spot under
-  // the cursor is "pressed back" into the page. One rAF loop, springs for smoothness,
-  // only cards on screen are updated, and only `transform` is written.
+  // ---------- 1a. Glass cards: hover tilt ----------
+  // Under a mouse, a work card tilts so the spot under the cursor is "pressed back"
+  // into the page (no idle floating). Springs for smoothness; the rAF loop only runs
+  // while a card is moving, and only `transform` is written.
   {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const TILT = 4;        // max degrees
     const PRESS = 14;      // px pushed back (translateZ) while hovered
-    const FLOAT_Y = canHover ? 6 : 2;   // px
-    const FLOAT_X = canHover ? 3 : 0;
-    const FLOAT_ROT = canHover ? 0.22 : 0; // deg
     const STIFF = 170, DAMP = 20;       // spring (per second)
     const PILL_H = 55;                  // px the title pill "hovers" above the card
 
@@ -208,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!hit || !float) return null;
       const k = {
         layer, hit, float, glass, pill, visible: false, hover: false,
-        phase: i * 1.7, // so neighbouring cards don't bob in sync
         // spring state: tiltX, tiltY, press (current + velocity), and targets
         s: { rx: 0, ry: 0, z: 0 }, v: { rx: 0, ry: 0, z: 0 }, t: { rx: 0, ry: 0, z: 0 },
         hoverAmt: 0,
@@ -243,11 +239,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }, { rootMargin: '10% 0px' });
       cards.forEach((k) => vis.observe(k.layer));
 
-      let last = performance.now();
+      // The loop only runs while a card is moving (hovered or springing back), then sleeps.
+      let last = 0, running = false;
       const frame = (now) => {
-        const dt = Math.min(0.05, (now - last) / 1000); // clamp after tab switches
+        const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); // clamp after tab switches
         last = now;
-        const time = now / 1000;
+        let busy = false;
         for (const k of cards) {
           if (!k.visible) continue;
           // springs toward the target tilt/press
@@ -255,17 +252,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const a = STIFF * (k.t[key] - k.s[key]) - DAMP * k.v[key];
             k.v[key] += a * dt;
             k.s[key] += k.v[key] * dt;
+            if (Math.abs(k.t[key] - k.s[key]) > 0.01 || Math.abs(k.v[key]) > 0.01) busy = true;
           }
-          // float calms down a little while hovered so the card is easy to aim at
-          k.hoverAmt += ((k.hover ? 1 : 0) - k.hoverAmt) * Math.min(1, dt * 4);
-          const amp = 1 - 0.55 * k.hoverAmt;
-          const ph = k.phase;
-          const fy = Math.sin(time * 0.95 + ph) * FLOAT_Y * amp;
-          const fx = Math.sin(time * 0.61 + ph * 1.3) * FLOAT_X * amp;
-          const fr = Math.sin(time * 0.73 + ph * 0.7) * FLOAT_ROT * amp;
+          const target = k.hover ? 1 : 0;
+          k.hoverAmt += (target - k.hoverAmt) * Math.min(1, dt * 4);
+          if (Math.abs(target - k.hoverAmt) > 0.002) busy = true;
+          if (k.hover) busy = true;
           k.float.style.transform =
-            `translate3d(${fx.toFixed(2)}px, ${fy.toFixed(2)}px, ${k.s.z.toFixed(2)}px) ` +
-            `rotateX(${k.s.rx.toFixed(3)}deg) rotateY(${k.s.ry.toFixed(3)}deg) rotateZ(${fr.toFixed(3)}deg)`;
+            `translate3d(0, 0, ${k.s.z.toFixed(2)}px) ` +
+            `rotateX(${k.s.rx.toFixed(3)}deg) rotateY(${k.s.ry.toFixed(3)}deg)`;
           // Title pill floats above the card: as the card tilts, the raised pill shifts
           // (parallax) and its shadow stays behind on the video, so they visibly separate.
           if (k.pill && canHover) {
@@ -279,9 +274,12 @@ document.addEventListener('DOMContentLoaded', () => {
               `${(-dx * 1.4).toFixed(1)}px ${(sy - dy * 1.4).toFixed(1)}px ${blur.toFixed(0)}px rgba(0, 0, 0, ${a.toFixed(3)})`);
           }
         }
-        requestAnimationFrame(frame);
+        if (busy) requestAnimationFrame(frame);
+        else { running = false; last = 0; }
       };
-      requestAnimationFrame(frame);
+      const wake = () => { if (!running) { running = true; requestAnimationFrame(frame); } };
+      cards.forEach((k) => ['pointerenter', 'pointermove', 'pointerleave'].forEach((ev) =>
+        k.hit.addEventListener(ev, wake, { passive: true })));
     }
   }
 
